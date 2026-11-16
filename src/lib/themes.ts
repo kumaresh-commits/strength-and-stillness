@@ -1,22 +1,22 @@
 export const themes = {
   dawn: {
-    name: 'Forest & Sage (Dark Green Elegance)',
-    primary: '#1B4332', // Elegant Dark Forest Green
+    name: 'Liquid Glass & Slate (Shiny Light Gray)',
+    primary: '#1B4332', // Elegant Dark Forest Green Glass
     primaryLight: '#2D6A4F',
     secondary: '#40916C', // Sage
-    accent: '#B8860B', // Subtle Muted Antique Gold
-    bg: '#F6F8F6', // Soft calming oyster-sage tint
+    accent: '#D4AF37', // Shiny Gold
+    bg: '#ECEEF2', // Premium Modern Light Gray
     bgDark: '#0E1F18',
-    card: '#FFFFFF',
-    text: '#14281D', // High readability deep forest black
-    textMuted: '#4B5E53',
-    border: '#E2E8E4',
+    card: 'rgba(255, 255, 255, 0.75)',
+    text: '#0F172A', // High-contrast charcoal slate
+    textMuted: '#475569', // Sophisticated slate gray
+    border: 'rgba(255, 255, 255, 0.85)',
     badgeBg: '#1B4332',
     badgeText: '#FFFFFF',
     success: '#2D6A4F',
     ring1: '#1B4332',
     ring2: '#40916C',
-    ring3: '#B8860B',
+    ring3: '#D4AF37',
   },
   cyber: {
     name: 'Midnight Pine (Refined Dark)',

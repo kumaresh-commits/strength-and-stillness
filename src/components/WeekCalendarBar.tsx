@@ -1,6 +1,5 @@
 import React from 'react';
 import { useStore } from '../store/useStore';
-import { themes } from '../lib/themes';
 import { sound } from '../lib/sound';
 import { getWeekDates, getTodayDateStr } from '../lib/dateUtils';
 import { Check, Calendar, RotateCcw } from 'lucide-react';
@@ -14,8 +13,7 @@ export const WeekCalendarBar: React.FC<WeekCalendarBarProps> = ({
   className = '',
   showStatusSummary = true,
 }) => {
-  const { theme, currentDate, setCurrentDate, syncTodayDate, getDayLog } = useStore();
-  const t = themes[theme];
+  const { currentDate, setCurrentDate, syncTodayDate, getDayLog } = useStore();
   const todayStr = getTodayDateStr();
 
   // Get current week's 7 days: Monday through Sunday
@@ -94,23 +92,14 @@ export const WeekCalendarBar: React.FC<WeekCalendarBarProps> = ({
                 sound.triggerHaptic('light');
                 setCurrentDate(day.dateStr);
               }}
-              className="flex-1 min-w-[54px] py-2 px-1 rounded-2xl flex flex-col items-center justify-center transition-all cursor-pointer border shadow-xs relative active:scale-95"
-              style={{
-                backgroundColor: isSelected ? '#1B4332' : t.card,
-                color: isSelected ? '#FFFFFF' : t.text,
-                borderColor: isSelected
-                  ? '#1B4332'
-                  : day.isToday
-                  ? '#D4AF37'
-                  : theme === 'cyber'
-                  ? 'rgba(255,255,255,0.08)'
-                  : 'rgba(0,0,0,0.08)',
-              }}
+              className={`flex-1 min-w-[54px] py-2 px-1 rounded-2xl flex flex-col items-center justify-center transition-all cursor-pointer relative active:scale-95 ${
+                isSelected ? 'glass-chip-active' : 'glass-chip-inactive'
+              }`}
             >
               {/* Today Gold Dot Indicator */}
               {day.isToday && !isSelected && (
                 <span
-                  className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] absolute top-1.5 right-1.5"
+                  className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] absolute top-1.5 right-1.5 shadow-xs"
                   title="Today"
                 />
               )}
@@ -118,14 +107,18 @@ export const WeekCalendarBar: React.FC<WeekCalendarBarProps> = ({
               {/* Day Abbreviation: Mon, Tue, Wed, etc. */}
               <span
                 className={`text-[10px] font-black uppercase tracking-wider ${
-                  isSelected ? 'text-emerald-100' : 'opacity-65'
+                  isSelected ? 'text-emerald-100' : 'text-slate-500'
                 }`}
               >
                 {day.dayShort}
               </span>
 
               {/* Day Date Number: 16, 17, 18, etc. */}
-              <span className="text-sm font-black mt-0.5 leading-none">
+              <span
+                className={`text-sm font-black mt-0.5 leading-none ${
+                  isSelected ? 'text-white' : 'text-slate-800'
+                }`}
+              >
                 {day.dateNum}
               </span>
 
@@ -136,7 +129,7 @@ export const WeekCalendarBar: React.FC<WeekCalendarBarProps> = ({
                     className={`inline-flex items-center justify-center w-3 h-3 rounded-full ${
                       isSelected
                         ? 'bg-[#D4AF37] text-[#1B4332]'
-                        : 'bg-[#1B4332] text-white'
+                        : 'bg-[#1B4332] text-white shadow-2xs'
                     }`}
                     title="Activity logged on this day"
                   >
@@ -145,7 +138,7 @@ export const WeekCalendarBar: React.FC<WeekCalendarBarProps> = ({
                 ) : (
                   <span
                     className={`text-[8px] font-semibold ${
-                      isSelected ? 'text-white/70' : 'opacity-40'
+                      isSelected ? 'text-white/70' : 'text-slate-400'
                     }`}
                   >
                     {day.isToday ? 'Today' : '—'}

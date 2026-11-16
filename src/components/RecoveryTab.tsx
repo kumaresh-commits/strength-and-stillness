@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
-import { themes } from '../lib/themes';
 import { sound } from '../lib/sound';
 import { toast } from 'sonner';
 import {
@@ -29,8 +28,7 @@ const stretchRoutine: StretchItem[] = [
 ];
 
 export const RecoveryTab: React.FC = () => {
-  const { theme, currentDate, getDayLog, setSleepHours, setSteps, dailyGoals } = useStore();
-  const t = themes[theme];
+  const { currentDate, getDayLog, setSleepHours, setSteps, dailyGoals } = useStore();
   const dayLog = getDayLog(currentDate);
 
   const [completedStretches, setCompletedStretches] = useState<string[]>([]);
@@ -81,59 +79,48 @@ export const RecoveryTab: React.FC = () => {
       </div>
 
       {/* Hero Quote Card from PDF */}
-      <div
-        className="rounded-3xl p-5 border text-center relative overflow-hidden shadow-xs"
-        style={{
-          backgroundColor: t.card,
-          borderColor: theme === 'cyber' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
-        }}
-      >
+      <div className="glass-panel rounded-3xl p-5 text-center relative overflow-hidden shadow-xs">
         <span className="text-2xl mb-1 block">🧘‍♂️</span>
-        <blockquote className="text-sm font-extrabold italic leading-snug">
+        <blockquote className="text-sm font-extrabold italic leading-snug text-slate-800 dark:text-white">
           “Discipline is choosing between what you want now and what you want most.”
         </blockquote>
-        <p className="text-xs font-semibold opacity-70 mt-2">
+        <p className="text-xs font-semibold text-slate-500 mt-2">
           Eat well. Train steady. Rest deeply. Repeat.
         </p>
       </div>
 
       {/* Sleep Tracker Card */}
-      <div
-        className="rounded-2xl p-4 border"
-        style={{
-          backgroundColor: t.card,
-          borderColor: theme === 'cyber' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
-        }}
-      >
+      <div className="glass-panel rounded-3xl p-4.5 shadow-xs">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <Bed size={18} className="text-indigo-500" />
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center glass-panel-subtle text-indigo-500">
+              <Bed size={18} />
+            </div>
             <div>
-              <h3 className="text-xs font-extrabold uppercase tracking-wider">Sleep Duration</h3>
-              <p className="text-[11px] opacity-70">
+              <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-white">Sleep Duration</h3>
+              <p className="text-[11px] text-slate-500">
                 Target: {dailyGoals.sleepHours || 8} hours of deep restorative sleep
               </p>
             </div>
           </div>
           <div className="text-right">
-            <span className="text-lg font-black text-indigo-500">
+            <span className="text-lg font-black text-indigo-600 dark:text-indigo-400">
               {dayLog.sleepHours || 0}
             </span>
-            <span className="text-xs opacity-60 font-medium">/{dailyGoals.sleepHours || 8} hrs</span>
+            <span className="text-xs text-slate-500 font-medium">/{dailyGoals.sleepHours || 8} hrs</span>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
           <button
             onClick={() => updateSleep(-0.5)}
-            className="flex-1 py-2 rounded-xl flex items-center justify-center font-bold text-xs bg-gray-100 dark:bg-gray-800 active:scale-95 cursor-pointer"
+            className="flex-1 py-2 rounded-xl flex items-center justify-center font-bold text-xs glass-btn-secondary text-slate-700 active:scale-95 cursor-pointer"
           >
             <Minus size={14} className="mr-1" /> -30 min
           </button>
           <button
             onClick={() => updateSleep(0.5)}
-            className="flex-1 py-2 rounded-xl flex items-center justify-center font-bold text-xs text-white shadow-sm active:scale-95 cursor-pointer"
-            style={{ backgroundColor: '#6366F1' }}
+            className="flex-1 py-2 rounded-xl flex items-center justify-center font-bold text-xs text-white glass-btn-primary active:scale-95 cursor-pointer shadow-xs"
           >
             <Plus size={14} className="mr-1" /> +30 min
           </button>
@@ -141,25 +128,21 @@ export const RecoveryTab: React.FC = () => {
       </div>
 
       {/* Light Walking / Step Log Card */}
-      <div
-        className="rounded-2xl p-4 border"
-        style={{
-          backgroundColor: t.card,
-          borderColor: theme === 'cyber' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
-        }}
-      >
+      <div className="glass-panel rounded-3xl p-4.5 shadow-xs">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <Footprints size={18} className="text-emerald-500" />
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center glass-panel-subtle text-emerald-600">
+              <Footprints size={18} />
+            </div>
             <div>
-              <h3 className="text-xs font-extrabold uppercase tracking-wider">Active Walking</h3>
-              <p className="text-[11px] opacity-70">
+              <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-white">Active Walking</h3>
+              <p className="text-[11px] text-slate-500">
                 Target: {dailyGoals.steps?.toLocaleString() || '6,000'} steps (light blood flow)
               </p>
             </div>
           </div>
           <div className="text-right">
-            <span className="text-base font-black text-emerald-500">
+            <span className="text-base font-black text-emerald-600 dark:text-emerald-400">
               {(dayLog.steps || 0).toLocaleString()}
             </span>
           </div>
@@ -169,14 +152,13 @@ export const RecoveryTab: React.FC = () => {
           <button
             onClick={() => updateSteps(-500)}
             disabled={(dayLog.steps || 0) <= 0}
-            className="flex-1 py-2 rounded-xl flex items-center justify-center font-bold text-xs bg-gray-100 dark:bg-gray-800 disabled:opacity-30 active:scale-95 cursor-pointer"
+            className="flex-1 py-2 rounded-xl flex items-center justify-center font-bold text-xs glass-btn-secondary text-slate-700 disabled:opacity-30 active:scale-95 cursor-pointer"
           >
             -500 steps
           </button>
           <button
             onClick={() => updateSteps(1000)}
-            className="flex-1 py-2 rounded-xl flex items-center justify-center font-bold text-xs text-white shadow-sm active:scale-95 cursor-pointer"
-            style={{ backgroundColor: '#10B981' }}
+            className="flex-1 py-2 rounded-xl flex items-center justify-center font-bold text-xs text-white glass-btn-primary active:scale-95 cursor-pointer shadow-xs"
           >
             +1,000 steps
           </button>
@@ -184,19 +166,13 @@ export const RecoveryTab: React.FC = () => {
       </div>
 
       {/* Gentle Stretching Routine Checklist */}
-      <div
-        className="rounded-3xl p-4 border"
-        style={{
-          backgroundColor: t.card,
-          borderColor: theme === 'cyber' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
-        }}
-      >
+      <div className="glass-panel rounded-3xl p-4.5 shadow-xs">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Sparkles size={16} className="text-amber-500" />
-            <h3 className="text-xs font-black uppercase tracking-wider">5-Minute Gentle Stretch Guide</h3>
+            <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-white">5-Minute Gentle Stretch Guide</h3>
           </div>
-          <span className="text-[11px] font-bold opacity-70">
+          <span className="text-[11px] font-bold text-slate-500">
             {completedStretches.length}/{stretchRoutine.length}
           </span>
         </div>
@@ -209,33 +185,25 @@ export const RecoveryTab: React.FC = () => {
               <div
                 key={idx}
                 onClick={() => toggleStretch(item.name)}
-                className="p-3 rounded-2xl border transition-all cursor-pointer flex items-center justify-between"
-                style={{
-                  backgroundColor: isDone
-                    ? theme === 'cyber'
-                      ? 'rgba(16,185,129,0.1)'
-                      : 'rgba(82,183,136,0.1)'
-                    : theme === 'cyber'
-                    ? 'rgba(255,255,255,0.02)'
-                    : 'rgba(0,0,0,0.02)',
-                  borderColor: isDone ? t.success : 'transparent',
-                }}
+                className={`p-3 rounded-2xl transition-all cursor-pointer flex items-center justify-between ${
+                  isDone ? 'glass-panel-subtle ring-1 ring-[#2D6A4F]/60' : 'glass-panel-subtle'
+                }`}
               >
                 <div>
                   <div className="flex items-center gap-2">
-                    <h4 className={`text-xs font-bold ${isDone ? 'line-through opacity-70' : ''}`}>
+                    <h4 className={`text-xs font-bold text-slate-800 dark:text-white ${isDone ? 'line-through opacity-70' : ''}`}>
                       {item.name}
                     </h4>
-                    <span className="text-[10px] font-semibold opacity-60">({item.duration})</span>
+                    <span className="text-[10px] font-semibold text-slate-400">({item.duration})</span>
                   </div>
-                  <p className="text-[10px] opacity-65 mt-0.5">{item.benefit}</p>
+                  <p className="text-[10px] text-slate-500 mt-0.5">{item.benefit}</p>
                 </div>
 
                 <div>
                   {isDone ? (
-                    <CheckCircle2 size={18} style={{ color: t.success }} />
+                    <CheckCircle2 size={18} className="text-[#2D6A4F]" />
                   ) : (
-                    <Circle size={18} className="opacity-30" />
+                    <Circle size={18} className="text-slate-400 opacity-40" />
                   )}
                 </div>
               </div>
@@ -245,13 +213,7 @@ export const RecoveryTab: React.FC = () => {
       </div>
 
       {/* Safety & Weight Guardrails from PDF */}
-      <div
-        className="rounded-2xl p-4 border text-xs space-y-2"
-        style={{
-          backgroundColor: t.card,
-          borderColor: theme === 'cyber' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
-        }}
-      >
+      <div className="glass-panel-subtle rounded-3xl p-4.5 text-xs space-y-2 shadow-xs">
         <div className="flex items-center gap-2 text-rose-500 font-bold uppercase tracking-wider text-[11px]">
           <ShieldCheck size={16} />
           <span>Weight & Recovery Guardrails</span>

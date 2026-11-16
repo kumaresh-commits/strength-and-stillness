@@ -133,17 +133,17 @@ export const SettingsTab: React.FC = () => {
         </p>
       </div>
 
-      {/* Segmented Section Switcher with Dark Green Active Pill */}
-      <div className="grid grid-cols-4 gap-1 p-1 rounded-2xl bg-gray-100 dark:bg-gray-800/80 border border-gray-200/60 dark:border-gray-700/60">
+      {/* Segmented Section Switcher with Glass Active Pill */}
+      <div className="grid grid-cols-4 gap-1 p-1 rounded-2xl glass-panel-subtle">
         <button
           onClick={() => {
             sound.triggerHaptic('light');
             setActiveSection('reminders');
           }}
-          className={`py-2 rounded-xl text-xs font-bold transition-all flex flex-col items-center gap-0.5 ${
+          className={`py-2 rounded-xl text-xs font-bold transition-all flex flex-col items-center gap-0.5 cursor-pointer ${
             activeSection === 'reminders'
-              ? 'bg-[#1B4332] text-white shadow-xs'
-              : 'opacity-70 text-gray-700 dark:text-gray-300'
+              ? 'glass-btn-primary text-white shadow-xs'
+              : 'text-slate-600 dark:text-slate-300 opacity-80'
           }`}
         >
           <Clock size={15} />
@@ -155,10 +155,10 @@ export const SettingsTab: React.FC = () => {
             sound.triggerHaptic('light');
             setActiveSection('goals');
           }}
-          className={`py-2 rounded-xl text-xs font-bold transition-all flex flex-col items-center gap-0.5 ${
+          className={`py-2 rounded-xl text-xs font-bold transition-all flex flex-col items-center gap-0.5 cursor-pointer ${
             activeSection === 'goals'
-              ? 'bg-[#1B4332] text-white shadow-xs'
-              : 'opacity-70 text-gray-700 dark:text-gray-300'
+              ? 'glass-btn-primary text-white shadow-xs'
+              : 'text-slate-600 dark:text-slate-300 opacity-80'
           }`}
         >
           <Target size={15} />
@@ -170,10 +170,10 @@ export const SettingsTab: React.FC = () => {
             sound.triggerHaptic('light');
             setActiveSection('notifications');
           }}
-          className={`py-2 rounded-xl text-xs font-bold transition-all flex flex-col items-center gap-0.5 ${
+          className={`py-2 rounded-xl text-xs font-bold transition-all flex flex-col items-center gap-0.5 cursor-pointer ${
             activeSection === 'notifications'
-              ? 'bg-[#1B4332] text-white shadow-xs'
-              : 'opacity-70 text-gray-700 dark:text-gray-300'
+              ? 'glass-btn-primary text-white shadow-xs'
+              : 'text-slate-600 dark:text-slate-300 opacity-80'
           }`}
         >
           <Bell size={15} />
@@ -185,10 +185,10 @@ export const SettingsTab: React.FC = () => {
             sound.triggerHaptic('light');
             setActiveSection('theme');
           }}
-          className={`py-2 rounded-xl text-xs font-bold transition-all flex flex-col items-center gap-0.5 ${
+          className={`py-2 rounded-xl text-xs font-bold transition-all flex flex-col items-center gap-0.5 cursor-pointer ${
             activeSection === 'theme'
-              ? 'bg-[#1B4332] text-white shadow-xs'
-              : 'opacity-70 text-gray-700 dark:text-gray-300'
+              ? 'glass-btn-primary text-white shadow-xs'
+              : 'text-slate-600 dark:text-slate-300 opacity-80'
           }`}
         >
           <Palette size={15} />
@@ -219,18 +219,15 @@ export const SettingsTab: React.FC = () => {
             {reminders.map((r) => (
               <div
                 key={r.id}
-                className="rounded-2xl p-3 border transition-all shadow-xs"
-                style={{
-                  backgroundColor: t.card,
-                  borderColor: r.enabled ? '#2D6A4F' : t.border,
-                  opacity: r.enabled ? 1 : 0.6,
-                }}
+                className={`glass-panel rounded-3xl p-3.5 transition-all shadow-xs ${
+                  r.enabled ? 'ring-1 ring-[#1B4332]/40' : 'opacity-70'
+                }`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    {/* Time Input Badge - Solid Dark Green with High Contrast White Numbers */}
+                    {/* Time Input Badge - Solid Dark Green Glass with High Contrast White Numbers */}
                     <div className="relative">
-                      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#1B4332] text-white font-black text-xs shadow-xs min-w-[90px] justify-center">
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass-btn-primary text-white font-black text-xs shadow-xs min-w-[90px] justify-center">
                         <Clock size={12} className="text-[#D4AF37]" />
                         <span>{formatDisplayTime(r.time)}</span>
                       </div>
@@ -245,8 +242,8 @@ export const SettingsTab: React.FC = () => {
                     </div>
 
                     <div>
-                      <h4 className="text-xs font-black tracking-tight">{r.label}</h4>
-                      <p className="text-[11px] opacity-75 font-medium truncate max-w-[150px]">
+                      <h4 className="text-xs font-black tracking-tight text-slate-800 dark:text-white">{r.label}</h4>
+                      <p className="text-[11px] text-slate-500 font-medium truncate max-w-[150px]">
                         {r.message}
                       </p>
                     </div>
@@ -255,7 +252,7 @@ export const SettingsTab: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => testReminder(r)}
-                      className="p-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-[10px] font-bold opacity-80 hover:opacity-100 cursor-pointer text-[#1B4332] dark:text-[#74C69D]"
+                      className="p-1.5 rounded-xl glass-btn-secondary text-[10px] font-bold cursor-pointer text-[#1B4332] dark:text-[#74C69D]"
                       title="Test this reminder alert"
                     >
                       <Play size={12} />
@@ -268,7 +265,7 @@ export const SettingsTab: React.FC = () => {
                           removeReminder(r.id);
                           toast.info(`Removed "${r.label}"`);
                         }}
-                        className="p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 cursor-pointer"
+                        className="p-1.5 rounded-xl text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 cursor-pointer"
                         title="Delete custom reminder"
                       >
                         <Trash2 size={13} />
@@ -280,14 +277,13 @@ export const SettingsTab: React.FC = () => {
                         sound.triggerHaptic('light');
                         updateReminder(r.id, { enabled: !r.enabled });
                       }}
-                      className="w-10 h-6 rounded-full transition-colors relative cursor-pointer"
-                      style={{
-                        backgroundColor: r.enabled ? '#1B4332' : '#D1D5DB',
-                      }}
+                      className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer ${
+                        r.enabled ? 'glass-btn-primary' : 'bg-slate-300 dark:bg-slate-700'
+                      }`}
                     >
                       <span
-                        className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-transform ${
-                          r.enabled ? 'left-5' : 'left-1'
+                        className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-transform shadow-xs ${
+                          r.enabled ? 'left-6' : 'left-1'
                         }`}
                       />
                     </button>

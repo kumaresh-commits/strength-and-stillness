@@ -28,20 +28,14 @@ export const ShakeModal: React.FC<ShakeModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-md animate-fade-in">
-      <div
-        className="w-full max-w-md max-h-[90vh] flex flex-col rounded-3xl shadow-2xl border overflow-hidden"
-        style={{
-          backgroundColor: t.card,
-          borderColor: '#1B4332',
-        }}
-      >
-        {/* Header - Premium Dark Green Banner */}
-        <div className="p-4 bg-[#1B4332] text-white flex items-center justify-between relative">
+      <div className="w-full max-w-md max-h-[90vh] flex flex-col rounded-3xl shadow-2xl glass-panel border border-white/80 overflow-hidden">
+        {/* Header - Premium Glossy Banner */}
+        <div className="p-4 glass-btn-primary text-white flex items-center justify-between relative">
           <div className="flex items-center gap-2.5">
             <span className="text-3xl">{currentRecipe.emoji}</span>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#D4AF37] text-[#1B4332]">
+                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#D4AF37] text-[#1B4332] shadow-xs">
                   Daily Bulking Shake
                 </span>
                 <span className="text-[10px] font-bold opacity-80 flex items-center gap-1">
@@ -57,7 +51,7 @@ export const ShakeModal: React.FC<ShakeModalProps> = ({
               sound.triggerHaptic('light');
               onClose();
             }}
-            className="w-8 h-8 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white font-bold text-sm cursor-pointer transition-all"
+            className="w-8 h-8 rounded-full flex items-center justify-center bg-white/20 hover:bg-white/30 text-white font-bold text-sm cursor-pointer transition-all shadow-xs"
           >
             <X size={16} />
           </button>

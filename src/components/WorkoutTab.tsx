@@ -97,17 +97,14 @@ export const WorkoutTab: React.FC = () => {
           </p>
         </div>
 
-        {/* Manual Timer Toggle Button with Dark Green Styling */}
+        {/* Manual Timer Toggle Button with Glossy Styling */}
         <button
           onClick={() => {
             sound.triggerHaptic('light');
             setTimerSeconds(60);
             setTimerOpen(!timerOpen);
           }}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer text-white"
-          style={{
-            backgroundColor: '#1B4332',
-          }}
+          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer text-white glass-btn-primary"
         >
           <Timer size={14} className="text-[#D4AF37]" />
           <span>Rest Timer</span>
@@ -118,19 +115,13 @@ export const WorkoutTab: React.FC = () => {
       <WeekCalendarBar className="my-1" />
 
       {/* Selected Day Workout Focus Card */}
-      <div
-        className="rounded-3xl p-4 border relative overflow-hidden shadow-xs"
-        style={{
-          backgroundColor: t.card,
-          borderColor: t.border,
-        }}
-      >
+      <div className="glass-panel rounded-3xl p-4.5 relative overflow-hidden shadow-xs">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider text-white bg-[#1B4332] mb-1">
+            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider text-white glass-btn-primary mb-1">
               <span>{currentWorkout.day} Routine</span>
             </div>
-            <h3 className="text-base font-black tracking-tight flex items-center gap-2">
+            <h3 className="text-base font-black tracking-tight flex items-center gap-2 text-slate-800 dark:text-white">
               <span>{currentWorkout.muscleGroup}</span>
               {currentWorkout.isRestDay && (
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
@@ -190,7 +181,7 @@ export const WorkoutTab: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Set Tracker Pills */}
+                  {/* Set Tracker Pills with Glossy Styling */}
                   <div className="flex items-center gap-2 mt-2">
                     {Array.from({ length: exercise.sets }).map((_, setIdx) => {
                       const isSetDone = completedSetsForDay.some(
@@ -201,12 +192,9 @@ export const WorkoutTab: React.FC = () => {
                         <button
                           key={setIdx}
                           onClick={() => handleSetToggle(exIdx, setIdx, exercise.name)}
-                          className="flex-1 py-1.5 px-2 rounded-xl text-xs font-black flex items-center justify-center gap-1 border transition-all active:scale-95 cursor-pointer shadow-2xs"
-                          style={{
-                            backgroundColor: isSetDone ? '#1B4332' : t.card,
-                            color: isSetDone ? '#FFFFFF' : t.text,
-                            borderColor: isSetDone ? '#1B4332' : t.border,
-                          }}
+                          className={`flex-1 py-1.5 px-2 rounded-xl text-xs font-black flex items-center justify-center gap-1 transition-all active:scale-95 cursor-pointer shadow-2xs ${
+                            isSetDone ? 'glass-chip-active' : 'glass-chip-inactive'
+                          }`}
                         >
                           {isSetDone ? (
                             <CheckCircle2 size={13} className="text-[#D4AF37]" />
@@ -226,10 +214,7 @@ export const WorkoutTab: React.FC = () => {
             <div className="pt-2">
               <button
                 onClick={handleToggleFinishWorkout}
-                className="w-full py-3.5 rounded-2xl font-black text-xs text-white shadow-md flex items-center justify-center gap-2 active:scale-98 cursor-pointer transition-all"
-                style={{
-                  backgroundColor: dayLog.workoutDone ? '#2D6A4F' : '#1B4332',
-                }}
+                className="w-full py-3.5 rounded-2xl font-black text-xs text-white shadow-md flex items-center justify-center gap-2 active:scale-98 cursor-pointer transition-all glass-btn-primary"
               >
                 {dayLog.workoutDone ? (
                   <>
@@ -243,7 +228,7 @@ export const WorkoutTab: React.FC = () => {
                   </>
                 )}
               </button>
-              <p className="text-[10px] text-center opacity-65 font-medium mt-1.5">
+              <p className="text-[10px] text-center text-slate-500 font-medium mt-1.5">
                 {isViewingToday
                   ? "Tomorrow's workout will automatically open with a fresh clean form!"
                   : `Viewing saved workout history for ${selectedDateFormatted}`}
@@ -254,13 +239,7 @@ export const WorkoutTab: React.FC = () => {
       </div>
 
       {/* Training Notes Card from PDF */}
-      <div
-        className="rounded-2xl p-4 border shadow-xs"
-        style={{
-          backgroundColor: t.card,
-          borderColor: t.border,
-        }}
-      >
+      <div className="glass-panel rounded-3xl p-4.5 shadow-xs">
         <div className="flex items-center gap-2 mb-2">
           <AlertTriangle size={16} className="text-[#B8860B]" />
           <h3 className="text-xs font-black uppercase tracking-wider text-[#1B4332] dark:text-[#74C69D]">
@@ -269,7 +248,7 @@ export const WorkoutTab: React.FC = () => {
         </div>
         <ul className="space-y-2 mt-2">
           {trainingNotes.map((note, idx) => (
-            <li key={idx} className="text-xs flex items-start gap-2 leading-relaxed font-medium">
+            <li key={idx} className="text-xs flex items-start gap-2 leading-relaxed font-medium text-slate-700 dark:text-slate-200">
               <span className="text-[#1B4332] font-black mt-0.5">•</span>
               <span>{note}</span>
             </li>

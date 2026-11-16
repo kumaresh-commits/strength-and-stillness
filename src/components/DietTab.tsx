@@ -117,10 +117,7 @@ export const DietTab: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-1.5 mb-1 flex-wrap">
-            <span
-              className="text-[11px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider text-white shadow-xs"
-              style={{ backgroundColor: '#1B4332' }}
-            >
+            <span className="text-[11px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider text-white shadow-xs glass-btn-primary">
               Rotating Indian Menu
             </span>
 
@@ -130,7 +127,7 @@ export const DietTab: React.FC = () => {
                 sound.triggerHaptic('light');
                 setShowGroceryModal(true);
               }}
-              className="text-[11px] font-bold text-[#1B4332] dark:text-[#74C69D] flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 cursor-pointer active:scale-95 transition-all"
+              className="text-[11px] font-bold text-slate-800 dark:text-[#74C69D] flex items-center gap-1 px-2.5 py-0.5 rounded-full glass-btn-secondary cursor-pointer active:scale-95 transition-all shadow-2xs"
               title="Tap to open the Kirana & Mandi Grocery Shopping List"
             >
               <ShoppingBag size={12} className="text-[#1B4332] dark:text-[#74C69D]" />
@@ -138,7 +135,7 @@ export const DietTab: React.FC = () => {
             </button>
           </div>
           <h2 className="text-lg font-black tracking-tight">Daily Indian Diet Plan</h2>
-          <p className="text-xs opacity-80 font-medium">
+          <p className="text-xs text-slate-600 dark:text-slate-300 font-medium">
             Calories & protein decrease in real-time as you log each meal.
           </p>
         </div>
@@ -149,10 +146,7 @@ export const DietTab: React.FC = () => {
             sound.triggerHaptic('light');
             setShowShakeModal(true);
           }}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer text-white flex-shrink-0"
-          style={{
-            backgroundColor: '#1B4332',
-          }}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer text-white flex-shrink-0 glass-btn-primary"
         >
           <Coffee size={13} className="text-[#D4AF37]" />
           <span>Shake</span>
@@ -163,19 +157,13 @@ export const DietTab: React.FC = () => {
       <WeekCalendarBar className="my-1" />
 
       {/* Active Day Theme Banner */}
-      <div
-        className="rounded-2xl p-3 border shadow-xs"
-        style={{
-          backgroundColor: t.card,
-          borderColor: t.border,
-        }}
-      >
+      <div className="glass-panel-subtle rounded-2xl p-3.5 shadow-xs">
         <div className="flex items-center justify-between">
           <div>
             <span className="text-[10px] font-black uppercase tracking-wider text-[#1B4332] dark:text-[#74C69D] block">
               {activePlan.dayName} Menu • {activePlan.theme}
             </span>
-            <p className="text-xs opacity-85 font-medium mt-0.5">
+            <p className="text-xs text-slate-700 dark:text-slate-200 font-medium mt-0.5">
               Key Ingredients: {activePlan.highlightFood}
             </p>
           </div>
@@ -183,25 +171,19 @@ export const DietTab: React.FC = () => {
       </div>
 
       {/* REAL-TIME DECREASING MACRO SUMMARY CARD */}
-      <div
-        className="rounded-2xl p-4 border shadow-xs"
-        style={{
-          backgroundColor: t.card,
-          borderColor: t.border,
-        }}
-      >
+      <div className="glass-panel rounded-3xl p-4.5 shadow-xs">
         <div className="flex items-center justify-between mb-2">
           <span className="text-[11px] font-black uppercase tracking-wider text-[#1B4332] dark:text-[#74C69D]">
             Remaining Daily Budget
           </span>
-          <span className="text-[10px] font-bold opacity-60">
+          <span className="text-[10px] font-bold text-slate-500">
             {dayLog.completedMeals.length}/5 Meals Logged
           </span>
         </div>
 
         <div className="grid grid-cols-2 gap-3 pt-1">
           {/* Remaining Calories Box */}
-          <div className="p-3 rounded-xl bg-orange-50/70 dark:bg-orange-950/30 border border-orange-200/60 dark:border-orange-900/40">
+          <div className="p-3.5 rounded-2xl glass-panel-subtle border border-orange-200/60 dark:border-orange-900/40">
             <div className="flex items-center gap-1.5 text-xs font-black text-orange-800 dark:text-orange-300 mb-0.5">
               <Flame size={15} className="text-orange-600" />
               <span>Energy Left</span>
@@ -215,7 +197,7 @@ export const DietTab: React.FC = () => {
           </div>
 
           {/* Remaining Protein Box */}
-          <div className="p-3 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/60 dark:border-emerald-900/40">
+          <div className="p-3.5 rounded-2xl glass-panel-subtle border border-emerald-200/60 dark:border-emerald-900/40">
             <div className="flex items-center gap-1.5 text-xs font-black text-emerald-800 dark:text-emerald-300 mb-0.5">
               <Sparkles size={15} className="text-[#1B4332] dark:text-emerald-400" />
               <span>Protein Left</span>
@@ -230,17 +212,16 @@ export const DietTab: React.FC = () => {
         </div>
 
         {/* Progress Bar */}
-        <div className="mt-3 pt-2 border-t border-gray-100 dark:border-gray-800/60">
-          <div className="flex justify-between text-[10px] font-bold opacity-70 mb-1">
+        <div className="mt-3.5 pt-2 border-t border-gray-200/60 dark:border-gray-800/60">
+          <div className="flex justify-between text-[10px] font-bold text-slate-500 mb-1">
             <span>Daily Consumption Progress</span>
             <span>{Math.round((consumedCalories / targetCalories) * 100)}%</span>
           </div>
-          <div className="w-full h-2 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
+          <div className="w-full h-2 rounded-full bg-slate-200/80 dark:bg-gray-800 overflow-hidden shadow-inner">
             <div
-              className="h-full rounded-full transition-all duration-500 ease-out"
+              className="h-full rounded-full transition-all duration-500 ease-out glass-btn-primary"
               style={{
                 width: `${Math.min(100, Math.round((consumedCalories / targetCalories) * 100))}%`,
-                backgroundColor: remainingCalories === 0 ? '#2D6A4F' : '#1B4332',
               }}
             />
           </div>
@@ -258,13 +239,9 @@ export const DietTab: React.FC = () => {
             <div
               key={meal.id}
               onClick={() => handleToggleMeal(meal.id, meal.title, mealCalories, mealProtein)}
-              className={`rounded-2xl p-4 transition-all duration-200 border cursor-pointer select-none relative shadow-xs ${
-                isDone ? 'opacity-85' : 'active:scale-[0.99]'
+              className={`glass-panel rounded-3xl p-4.5 transition-all duration-200 cursor-pointer select-none relative shadow-xs ${
+                isDone ? 'opacity-85 ring-1 ring-[#2D6A4F]/50' : 'active:scale-[0.99]'
               }`}
-              style={{
-                backgroundColor: t.card,
-                borderColor: isDone ? '#2D6A4F' : t.border,
-              }}
             >
               {/* Card Header: Prominent Dark Green Timing Badge, Title, and Checkbox */}
               <div className="flex items-center justify-between mb-3">
@@ -273,18 +250,18 @@ export const DietTab: React.FC = () => {
                   <div>
                     {/* Clear, High-Contrast Dark Green Timing Badge */}
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-black text-white bg-[#1B4332] shadow-xs">
+                      <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-black text-white glass-btn-primary shadow-xs">
                         <Clock size={11} className="text-[#D4AF37]" />
                         <span className="tracking-wide">{meal.time}</span>
                       </div>
 
                       {/* Specific Meal Calories & Protein Pill */}
-                      <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 border border-amber-200/50">
+                      <span className="text-[10px] font-black px-2 py-0.5 rounded-full glass-panel-subtle text-amber-900 dark:text-amber-200 border border-amber-200/50">
                         ⚡ {mealCalories} kcal • 🥩 {mealProtein}g protein
                       </span>
                     </div>
 
-                    <h3 className={`text-sm font-extrabold tracking-tight ${isDone ? 'line-through opacity-70' : ''}`}>
+                    <h3 className={`text-sm font-extrabold tracking-tight text-slate-800 dark:text-white ${isDone ? 'line-through opacity-70' : ''}`}>
                       {meal.title}
                     </h3>
                   </div>
@@ -293,15 +270,15 @@ export const DietTab: React.FC = () => {
                 {/* Checkbox Icon */}
                 <div className="transition-transform active:scale-90">
                   {isDone ? (
-                    <CheckCircle2 size={24} style={{ color: '#2D6A4F' }} />
+                    <CheckCircle2 size={24} className="text-[#2D6A4F] dark:text-[#52B788]" />
                   ) : (
-                    <Circle size={24} className="opacity-25" />
+                    <Circle size={24} className="text-slate-400 opacity-60" />
                   )}
                 </div>
               </div>
 
               {/* Meal Food Items List */}
-              <ul className="space-y-2 ml-1 mt-2 border-t border-gray-100 dark:border-gray-800/60 pt-2.5">
+              <ul className="space-y-2 ml-1 mt-2 border-t border-gray-200/60 dark:border-gray-800/60 pt-2.5">
                 {meal.items.map((item, idx) => {
                   const displayText =
                     isVegetarian && item.vegAlternative ? item.vegAlternative : item.name;
@@ -309,8 +286,7 @@ export const DietTab: React.FC = () => {
                   return (
                     <li
                       key={idx}
-                      className="text-xs flex items-start gap-2 font-medium leading-relaxed"
-                      style={{ color: t.text }}
+                      className="text-xs flex items-start gap-2 font-medium leading-relaxed text-slate-700 dark:text-slate-200"
                     >
                       <span
                         className="w-2 h-2 rounded-full flex-shrink-0 mt-1"
@@ -333,7 +309,7 @@ export const DietTab: React.FC = () => {
 
               {/* Macro tag if present */}
               {meal.macroTag && (
-                <div className="mt-2.5 pt-2 border-t border-gray-100 dark:border-gray-800/40 text-[10px] font-bold text-[#4B5E53] dark:text-[#A7C4B5] italic">
+                <div className="mt-2.5 pt-2 border-t border-gray-200/40 dark:border-gray-800/40 text-[10px] font-bold text-[#4B5E53] dark:text-[#A7C4B5] italic">
                   🌿 {meal.macroTag}
                 </div>
               )}
@@ -343,21 +319,15 @@ export const DietTab: React.FC = () => {
       </div>
 
       {/* Hydration Tracker Card */}
-      <div
-        className="rounded-2xl p-4 border shadow-xs"
-        style={{
-          backgroundColor: t.card,
-          borderColor: t.border,
-        }}
-      >
+      <div className="glass-panel rounded-3xl p-4.5 shadow-xs">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center bg-cyan-50 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-300">
+            <div className="w-9 h-9 rounded-2xl flex items-center justify-center glass-panel-subtle text-cyan-700 dark:text-cyan-300 shadow-2xs">
               <Droplets size={18} />
             </div>
             <div>
-              <h3 className="text-xs font-black uppercase tracking-wider">Hydration Tracker</h3>
-              <p className="text-[11px] opacity-75 font-medium">
+              <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-white">Hydration Tracker</h3>
+              <p className="text-[11px] text-slate-500 font-medium">
                 Target: {dailyGoals.waterGlasses || 8} glasses (~2.5 Litres)
               </p>
             </div>
@@ -366,7 +336,7 @@ export const DietTab: React.FC = () => {
             <span className="text-xl font-black text-[#1B4332] dark:text-cyan-400">
               {dayLog.waterGlasses || 0}
             </span>
-            <span className="text-xs opacity-60 font-semibold">/{dailyGoals.waterGlasses || 8}</span>
+            <span className="text-xs opacity-60 font-semibold text-slate-500">/{dailyGoals.waterGlasses || 8}</span>
           </div>
         </div>
 
@@ -375,14 +345,13 @@ export const DietTab: React.FC = () => {
           <button
             onClick={() => updateWater(-1)}
             disabled={(dayLog.waterGlasses || 0) <= 0}
-            className="flex-1 py-2 rounded-xl flex items-center justify-center font-bold text-xs bg-gray-100 dark:bg-gray-800 disabled:opacity-30 active:scale-95 cursor-pointer"
+            className="flex-1 py-2 rounded-xl flex items-center justify-center font-bold text-xs glass-btn-secondary text-slate-700 disabled:opacity-30 active:scale-95 cursor-pointer"
           >
             <Minus size={14} className="mr-1" /> -1 Glass
           </button>
           <button
             onClick={() => updateWater(1)}
-            className="flex-1 py-2 rounded-xl flex items-center justify-center font-black text-xs text-white shadow-xs active:scale-95 cursor-pointer"
-            style={{ backgroundColor: '#1B4332' }}
+            className="flex-1 py-2 rounded-xl flex items-center justify-center font-black text-xs text-white glass-btn-primary shadow-xs active:scale-95 cursor-pointer"
           >
             <Plus size={14} className="mr-1" /> +1 Glass (250ml)
           </button>
@@ -390,19 +359,13 @@ export const DietTab: React.FC = () => {
       </div>
 
       {/* Important Food Rules Accordion */}
-      <div
-        className="rounded-2xl p-4 border shadow-xs"
-        style={{
-          backgroundColor: t.card,
-          borderColor: t.border,
-        }}
-      >
+      <div className="glass-panel-subtle rounded-2xl p-4 shadow-xs">
         <button
           onClick={() => {
             sound.triggerHaptic('light');
             setShowRules(!showRules);
           }}
-          className="w-full flex items-center justify-between text-left cursor-pointer"
+          className="w-full flex items-center justify-between text-left cursor-pointer text-slate-800 dark:text-white"
         >
           <div className="flex items-center gap-2">
             <Info size={16} className="text-[#1B4332] dark:text-[#52B788]" />
@@ -412,9 +375,9 @@ export const DietTab: React.FC = () => {
         </button>
 
         {showRules && (
-          <ul className="mt-3 space-y-2 border-t border-gray-100 dark:border-gray-800 pt-3">
+          <ul className="mt-3 space-y-2 border-t border-gray-200/60 dark:border-gray-800 pt-3">
             {foodRules.map((rule, idx) => (
-              <li key={idx} className="text-xs flex items-start gap-2 leading-relaxed font-medium">
+              <li key={idx} className="text-xs flex items-start gap-2 leading-relaxed font-medium text-slate-700 dark:text-slate-200">
                 <span className="text-[#2D6A4F] font-bold mt-0.5">•</span>
                 <span>{rule}</span>
               </li>
@@ -425,26 +388,23 @@ export const DietTab: React.FC = () => {
 
       {/* INTERACTIVE KIRANA & MANDI GROCERY CHECKLIST MODAL */}
       {showGroceryModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div
-            className="w-full max-w-md max-h-[85vh] flex flex-col rounded-3xl p-5 shadow-2xl border"
-            style={{ backgroundColor: t.card, borderColor: '#1B4332' }}
-          >
-            <div className="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-gray-800">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in">
+          <div className="w-full max-w-md max-h-[85vh] flex flex-col rounded-3xl p-5 shadow-2xl glass-panel border border-white/80">
+            <div className="flex items-center justify-between pb-3 border-b border-gray-200/60 dark:border-gray-800">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl flex items-center justify-center bg-emerald-100 dark:bg-emerald-950 text-[#1B4332] dark:text-emerald-300">
+                <div className="w-8 h-8 rounded-xl flex items-center justify-center glass-panel-subtle text-[#1B4332] dark:text-emerald-300">
                   <ShoppingBag size={18} />
                 </div>
                 <div>
-                  <h3 className="text-sm font-black">Kirana & Mandi Checklist</h3>
-                  <span className="text-[10px] opacity-75 font-semibold">
+                  <h3 className="text-sm font-black text-slate-800 dark:text-white">Kirana & Mandi Checklist</h3>
+                  <span className="text-[10px] text-slate-500 font-semibold">
                     Everything you need for this week's Indian diet
                   </span>
                 </div>
               </div>
               <button
                 onClick={() => setShowGroceryModal(false)}
-                className="w-7 h-7 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 font-bold text-xs"
+                className="w-7 h-7 rounded-full flex items-center justify-center glass-btn-secondary font-bold text-xs cursor-pointer"
               >
                 <X size={14} />
               </button>

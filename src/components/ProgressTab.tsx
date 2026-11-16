@@ -1,6 +1,5 @@
 import React from 'react';
 import { useStore } from '../store/useStore';
-import { themes } from '../lib/themes';
 import { sound } from '../lib/sound';
 import { toast } from 'sonner';
 import {
@@ -11,8 +10,7 @@ import {
 } from 'lucide-react';
 
 export const ProgressTab: React.FC = () => {
-  const { theme, dayLogs, dailyGoals } = useStore();
-  const t = themes[theme];
+  const { dayLogs, dailyGoals } = useStore();
 
   // Calculate stats across all logged days
   const loggedDates = Object.keys(dayLogs);
@@ -75,98 +73,72 @@ export const ProgressTab: React.FC = () => {
 
       {/* Streak Showcase Cards */}
       <div className="grid grid-cols-2 gap-3">
-        <div
-          className="rounded-3xl p-4 border relative overflow-hidden"
-          style={{
-            backgroundColor: t.card,
-            borderColor: theme === 'cyber' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
-          }}
-        >
+        <div className="glass-panel rounded-3xl p-4.5 relative overflow-hidden shadow-xs">
           <div className="flex items-center gap-2 mb-1">
             <Flame size={18} className="text-orange-500 animate-pulse" />
-            <span className="text-[11px] font-extrabold uppercase tracking-wider opacity-70">
+            <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
               Diet Streak
             </span>
           </div>
-          <div className="text-2xl font-black mt-1">
-            {Math.max(1, totalDaysLogged)} <span className="text-xs font-semibold opacity-60">Days</span>
+          <div className="text-2xl font-black mt-1 text-slate-800 dark:text-white">
+            {Math.max(1, totalDaysLogged)} <span className="text-xs font-semibold text-slate-500">Days</span>
           </div>
-          <span className="text-[10px] opacity-60 block mt-1">5-meal daily discipline</span>
+          <span className="text-[10px] text-slate-400 block mt-1">5-meal daily discipline</span>
         </div>
 
-        <div
-          className="rounded-3xl p-4 border relative overflow-hidden"
-          style={{
-            backgroundColor: t.card,
-            borderColor: theme === 'cyber' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
-          }}
-        >
+        <div className="glass-panel rounded-3xl p-4.5 relative overflow-hidden shadow-xs">
           <div className="flex items-center gap-2 mb-1">
-            <Award size={18} className="text-emerald-500" />
-            <span className="text-[11px] font-extrabold uppercase tracking-wider opacity-70">
+            <Award size={18} className="text-emerald-600" />
+            <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
               Gym Streak
             </span>
           </div>
-          <div className="text-2xl font-black mt-1">
+          <div className="text-2xl font-black mt-1 text-slate-800 dark:text-white">
             {Math.max(1, loggedDates.filter((d) => dayLogs[d]?.workoutDone).length)}{' '}
-            <span className="text-xs font-semibold opacity-60">Sessions</span>
+            <span className="text-xs font-semibold text-slate-500">Sessions</span>
           </div>
-          <span className="text-[10px] opacity-60 block mt-1">Progressive overload</span>
+          <span className="text-[10px] text-slate-400 block mt-1">Progressive overload</span>
         </div>
       </div>
 
       {/* 7-Day Consistency Matrix */}
-      <div
-        className="rounded-3xl p-4 border"
-        style={{
-          backgroundColor: t.card,
-          borderColor: theme === 'cyber' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
-        }}
-      >
+      <div className="glass-panel rounded-3xl p-4.5 shadow-xs">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <Calendar size={16} style={{ color: t.primary }} />
-            <h3 className="text-xs font-black uppercase tracking-wider">Weekly Consistency</h3>
+            <Calendar size={16} className="text-[#1B4332] dark:text-[#74C69D]" />
+            <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-white">Weekly Consistency</h3>
           </div>
-          <span className="text-[10px] font-bold opacity-60">Past 7 Days</span>
+          <span className="text-[10px] font-bold text-slate-400">Past 7 Days</span>
         </div>
 
         <div className="grid grid-cols-7 gap-1.5 text-center">
           {past7Days.map((d, idx) => (
             <div
               key={idx}
-              className={`p-2 rounded-2xl flex flex-col items-center border transition-all ${
-                d.isToday ? 'ring-2' : ''
+              className={`p-2 rounded-2xl flex flex-col items-center transition-all ${
+                d.isToday ? 'glass-panel-subtle ring-2 ring-[#1B4332]' : 'glass-panel-subtle'
               }`}
-              style={{
-                borderColor: d.isToday ? t.primary : theme === 'cyber' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
-                backgroundColor: d.isToday
-                  ? theme === 'cyber'
-                    ? 'rgba(255,255,255,0.05)'
-                    : 'rgba(0,0,0,0.03)'
-                  : 'transparent',
-              }}
             >
-              <span className="text-[10px] font-extrabold opacity-60">{d.dayShort}</span>
-              <span className="text-xs font-black my-1">{d.dayNum}</span>
+              <span className="text-[10px] font-extrabold text-slate-400">{d.dayShort}</span>
+              <span className="text-xs font-black my-1 text-slate-800 dark:text-white">{d.dayNum}</span>
 
               {/* Status indicators */}
               <div className="space-y-1 w-full flex flex-col items-center">
                 <span
                   className={`w-2 h-2 rounded-full ${
-                    d.mealsDone ? 'bg-orange-500' : 'bg-gray-200 dark:bg-gray-700'
+                    d.mealsDone ? 'bg-orange-500' : 'bg-slate-300 dark:bg-gray-700'
                   }`}
                   title="Diet"
                 />
                 <span
                   className={`w-2 h-2 rounded-full ${
-                    d.workoutDone ? 'bg-emerald-500' : 'bg-gray-200 dark:bg-gray-700'
+                    d.workoutDone ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-gray-700'
                   }`}
                   title="Workout"
                 />
                 <span
                   className={`w-2 h-2 rounded-full ${
-                    d.waterDone ? 'bg-cyan-500' : 'bg-gray-200 dark:bg-gray-700'
+                    d.waterDone ? 'bg-cyan-500' : 'bg-slate-300 dark:bg-gray-700'
                   }`}
                   title="Hydration"
                 />
@@ -176,7 +148,7 @@ export const ProgressTab: React.FC = () => {
         </div>
 
         {/* Legend */}
-        <div className="flex items-center justify-center gap-4 mt-3 pt-3 border-t border-gray-100 dark:border-gray-800 text-[10px] opacity-70">
+        <div className="flex items-center justify-center gap-4 mt-3 pt-3 border-t border-gray-200/60 dark:border-gray-800 text-[10px] text-slate-500">
           <div className="flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-orange-500" />
             <span>Meals</span>
@@ -193,17 +165,11 @@ export const ProgressTab: React.FC = () => {
       </div>
 
       {/* Local Storage & Export Options */}
-      <div
-        className="rounded-3xl p-4 border"
-        style={{
-          backgroundColor: t.card,
-          borderColor: theme === 'cyber' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
-        }}
-      >
+      <div className="glass-panel rounded-3xl p-4.5 shadow-xs">
         <div className="flex items-center justify-between mb-2">
           <div>
-            <h3 className="text-xs font-black uppercase tracking-wider">Local Data & Privacy</h3>
-            <p className="text-[11px] opacity-70 mt-0.5">
+            <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-white">Local Data & Privacy</h3>
+            <p className="text-[11px] text-slate-500 mt-0.5">
               100% of your data stays privately on your iPhone.
             </p>
           </div>
@@ -212,8 +178,7 @@ export const ProgressTab: React.FC = () => {
         <div className="pt-2">
           <button
             onClick={exportData}
-            className="w-full py-2.5 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 border bg-gray-50 dark:bg-gray-800 active:scale-95 cursor-pointer transition-all"
-            style={{ borderColor: theme === 'cyber' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }}
+            className="w-full py-2.5 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 glass-btn-secondary text-slate-800 active:scale-95 cursor-pointer transition-all shadow-xs"
           >
             <Download size={14} /> Download Backup (JSON)
           </button>

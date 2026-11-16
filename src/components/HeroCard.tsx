@@ -60,13 +60,7 @@ export const HeroCard: React.FC = () => {
   };
 
   return (
-    <div
-      className="rounded-3xl p-5 mb-5 shadow-sm transition-all duration-300 border relative overflow-hidden"
-      style={{
-        backgroundColor: t.card,
-        borderColor: theme === 'cyber' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)',
-      }}
-    >
+    <div className="glass-panel rounded-3xl p-5 mb-5 transition-all duration-300 relative overflow-hidden">
       {/* Background subtle glow */}
       <div
         className="absolute -top-16 -right-16 w-36 h-36 rounded-full blur-3xl opacity-20 pointer-events-none"
@@ -84,7 +78,7 @@ export const HeroCard: React.FC = () => {
                   sound.triggerHaptic('light');
                   syncTodayDate();
                 }}
-                className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-[#1B4332] text-white hover:opacity-90 active:scale-95 transition-all cursor-pointer"
+                className="flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold glass-btn-primary text-white hover:opacity-90 active:scale-95 transition-all cursor-pointer"
                 title="Tap to jump back to today"
               >
                 <RotateCcw size={9} />
@@ -97,21 +91,18 @@ export const HeroCard: React.FC = () => {
           </h1>
         </div>
 
-        {/* Veg / Non-Veg Toggle Pill with Dark Green Styling */}
+        {/* Veg / Non-Veg Toggle Pill with Glossy Styling */}
         <button
           onClick={() => {
             sound.triggerHaptic('medium');
             toggleVegetarian();
           }}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black transition-all shadow-xs active:scale-95 cursor-pointer text-white"
-          style={{
-            backgroundColor: '#1B4332',
-          }}
+          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-black transition-all glass-btn-primary text-white cursor-pointer active:scale-95 shadow-sm"
           title="Toggle Vegetarian / Non-Vegetarian diet options"
         >
           {isVegetarian ? (
             <>
-              <Leaf size={13} className="text-[#52B788]" />
+              <Leaf size={13} className="text-[#74C69D]" />
               <span>Veg (Paneer)</span>
             </>
           ) : (
@@ -126,11 +117,7 @@ export const HeroCard: React.FC = () => {
       {/* Daily Rotating Wisdom Banner */}
       <div
         onClick={nextQuote}
-        className="rounded-2xl p-3 mb-4 cursor-pointer transition-all active:scale-[0.99] border relative"
-        style={{
-          backgroundColor: theme === 'cyber' ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
-          borderColor: theme === 'cyber' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
-        }}
+        className="glass-panel-subtle rounded-2xl p-3.5 mb-4 cursor-pointer transition-all active:scale-[0.99] relative"
       >
         <div className="flex items-center justify-between mb-1">
           <div className="flex items-center gap-1.5">

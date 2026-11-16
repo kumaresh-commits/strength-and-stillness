@@ -78,25 +78,19 @@ export const RestTimer: React.FC<RestTimerProps> = ({
 
   return (
     <div className="fixed bottom-24 right-4 left-4 max-w-sm mx-auto z-40 animate-slide-up">
-      <div
-        className="rounded-3xl p-5 shadow-2xl border backdrop-blur-md relative"
-        style={{
-          backgroundColor: theme === 'cyber' ? '#1E293B' : '#FFFFFF',
-          borderColor: t.primary,
-        }}
-      >
+      <div className="glass-panel rounded-3xl p-5 shadow-2xl relative border border-white/80">
         {/* Header */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Bell size={16} style={{ color: t.primary }} className={isActive ? 'animate-bounce' : ''} />
-            <span className="text-xs font-black uppercase tracking-wider">Rest Countdown</span>
+            <span className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-white">Rest Countdown</span>
           </div>
           <button
             onClick={() => {
               sound.triggerHaptic('light');
               onClose();
             }}
-            className="w-7 h-7 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 text-xs font-bold"
+            className="w-7 h-7 rounded-full flex items-center justify-center glass-btn-secondary text-xs font-bold cursor-pointer"
           >
             <X size={14} />
           </button>
@@ -128,8 +122,8 @@ export const RestTimer: React.FC<RestTimerProps> = ({
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-3xl font-black tracking-tight">{formatTime(timeLeft)}</span>
-              <span className="text-[10px] font-bold opacity-60 uppercase mt-0.5">
+              <span className="text-3xl font-black tracking-tight text-slate-800 dark:text-white">{formatTime(timeLeft)}</span>
+              <span className="text-[10px] font-bold text-slate-500 uppercase mt-0.5">
                 {isActive ? 'Breathe & Recover' : 'Ready to Lift'}
               </span>
             </div>
@@ -142,12 +136,9 @@ export const RestTimer: React.FC<RestTimerProps> = ({
             <button
               key={secs}
               onClick={() => setPreset(secs)}
-              className="px-2.5 py-1 rounded-lg text-xs font-bold border transition-all active:scale-95 cursor-pointer"
-              style={{
-                borderColor: totalTime === secs ? t.primary : 'transparent',
-                backgroundColor: totalTime === secs ? t.primary : theme === 'cyber' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
-                color: totalTime === secs ? '#FFFFFF' : 'inherit',
-              }}
+              className={`px-3 py-1 rounded-xl text-xs font-black transition-all active:scale-95 cursor-pointer shadow-2xs ${
+                totalTime === secs ? 'glass-chip-active' : 'glass-chip-inactive'
+              }`}
             >
               {secs}s
             </button>
@@ -155,14 +146,13 @@ export const RestTimer: React.FC<RestTimerProps> = ({
         </div>
 
         {/* Play / Pause / +30s Actions */}
-        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
+        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-200/60 dark:border-gray-800">
           <button
             onClick={() => {
               sound.triggerHaptic('light');
               setIsActive(!isActive);
             }}
-            className="flex-1 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 text-white shadow-sm active:scale-95 cursor-pointer"
-            style={{ backgroundColor: t.primary }}
+            className="flex-1 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 text-white shadow-xs active:scale-95 cursor-pointer glass-btn-primary"
           >
             {isActive ? (
               <>
@@ -177,7 +167,7 @@ export const RestTimer: React.FC<RestTimerProps> = ({
 
           <button
             onClick={() => addTime(30)}
-            className="px-3.5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-1 bg-gray-100 dark:bg-gray-800 active:scale-95 cursor-pointer"
+            className="px-3.5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-1 glass-btn-secondary text-slate-800 active:scale-95 cursor-pointer"
             title="Add 30 seconds"
           >
             <Plus size={14} /> +30s
@@ -189,7 +179,7 @@ export const RestTimer: React.FC<RestTimerProps> = ({
               setTimeLeft(totalTime);
               setIsActive(false);
             }}
-            className="px-3 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center bg-gray-100 dark:bg-gray-800 active:scale-95 cursor-pointer"
+            className="px-3 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center glass-btn-secondary text-slate-800 active:scale-95 cursor-pointer"
             title="Reset timer"
           >
             <RotateCcw size={14} />
