@@ -83,7 +83,7 @@ export const RestTimer: React.FC<RestTimerProps> = ({
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Bell size={16} style={{ color: t.primary }} className={isActive ? 'animate-bounce' : ''} />
-            <span className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-white">Rest Countdown</span>
+            <span className="text-xs font-black uppercase tracking-wider text-slate-900">Rest Countdown</span>
           </div>
           <button
             onClick={() => {
@@ -122,8 +122,8 @@ export const RestTimer: React.FC<RestTimerProps> = ({
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-3xl font-black tracking-tight text-slate-800 dark:text-white">{formatTime(timeLeft)}</span>
-              <span className="text-[10px] font-bold text-slate-500 uppercase mt-0.5">
+              <span className="text-3xl font-black tracking-tight text-slate-900">{formatTime(timeLeft)}</span>
+              <span className="text-[10px] font-bold text-slate-600 uppercase mt-0.5">
                 {isActive ? 'Breathe & Recover' : 'Ready to Lift'}
               </span>
             </div>
@@ -146,7 +146,7 @@ export const RestTimer: React.FC<RestTimerProps> = ({
         </div>
 
         {/* Play / Pause / +30s Actions */}
-        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-200/60 dark:border-gray-800">
+        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-200">
           <button
             onClick={() => {
               sound.triggerHaptic('light');

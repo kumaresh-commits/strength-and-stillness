@@ -57,7 +57,7 @@ export const ProgressTab: React.FC = () => {
     <div className="space-y-4">
       {/* Title */}
       <div>
-        <h2 className="text-lg font-black tracking-tight flex items-center gap-2">
+        <h2 className="text-lg font-black tracking-tight flex items-center gap-2 text-slate-900">
           <span>Consistency & Analytics</span>
           <span
             className="text-[11px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider text-white shadow-xs"
@@ -66,7 +66,7 @@ export const ProgressTab: React.FC = () => {
             Insights
           </span>
         </h2>
-        <p className="text-xs opacity-75 mt-0.5">
+        <p className="text-xs text-slate-600 mt-0.5 font-medium">
           Track your progressive journey day by day.
         </p>
       </div>
@@ -76,28 +76,28 @@ export const ProgressTab: React.FC = () => {
         <div className="glass-panel rounded-3xl p-4.5 relative overflow-hidden shadow-xs">
           <div className="flex items-center gap-2 mb-1">
             <Flame size={18} className="text-orange-500 animate-pulse" />
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
+            <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-600">
               Diet Streak
             </span>
           </div>
-          <div className="text-2xl font-black mt-1 text-slate-800 dark:text-white">
+          <div className="text-2xl font-black mt-1 text-slate-900">
             {Math.max(1, totalDaysLogged)} <span className="text-xs font-semibold text-slate-500">Days</span>
           </div>
-          <span className="text-[10px] text-slate-400 block mt-1">5-meal daily discipline</span>
+          <span className="text-[10px] text-slate-500 font-semibold block mt-1">5-meal daily discipline</span>
         </div>
 
         <div className="glass-panel rounded-3xl p-4.5 relative overflow-hidden shadow-xs">
           <div className="flex items-center gap-2 mb-1">
-            <Award size={18} className="text-emerald-600" />
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
+            <Award size={18} className="text-emerald-700" />
+            <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-600">
               Gym Streak
             </span>
           </div>
-          <div className="text-2xl font-black mt-1 text-slate-800 dark:text-white">
+          <div className="text-2xl font-black mt-1 text-slate-900">
             {Math.max(1, loggedDates.filter((d) => dayLogs[d]?.workoutDone).length)}{' '}
             <span className="text-xs font-semibold text-slate-500">Sessions</span>
           </div>
-          <span className="text-[10px] text-slate-400 block mt-1">Progressive overload</span>
+          <span className="text-[10px] text-slate-500 font-semibold block mt-1">Progressive overload</span>
         </div>
       </div>
 
@@ -105,10 +105,10 @@ export const ProgressTab: React.FC = () => {
       <div className="glass-panel rounded-3xl p-4.5 shadow-xs">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <Calendar size={16} className="text-[#1B4332] dark:text-[#74C69D]" />
-            <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-white">Weekly Consistency</h3>
+            <Calendar size={16} className="text-[#1B4332]" />
+            <h3 className="text-xs font-black uppercase tracking-wider text-slate-900">Weekly Consistency</h3>
           </div>
-          <span className="text-[10px] font-bold text-slate-400">Past 7 Days</span>
+          <span className="text-[10px] font-bold text-slate-500">Past 7 Days</span>
         </div>
 
         <div className="grid grid-cols-7 gap-1.5 text-center">
@@ -119,26 +119,26 @@ export const ProgressTab: React.FC = () => {
                 d.isToday ? 'glass-panel-subtle ring-2 ring-[#1B4332]' : 'glass-panel-subtle'
               }`}
             >
-              <span className="text-[10px] font-extrabold text-slate-400">{d.dayShort}</span>
-              <span className="text-xs font-black my-1 text-slate-800 dark:text-white">{d.dayNum}</span>
+              <span className="text-[10px] font-extrabold text-slate-500">{d.dayShort}</span>
+              <span className="text-xs font-black my-1 text-slate-900">{d.dayNum}</span>
 
               {/* Status indicators */}
               <div className="space-y-1 w-full flex flex-col items-center">
                 <span
                   className={`w-2 h-2 rounded-full ${
-                    d.mealsDone ? 'bg-orange-500' : 'bg-slate-300 dark:bg-gray-700'
+                    d.mealsDone ? 'bg-orange-500' : 'bg-slate-300'
                   }`}
                   title="Diet"
                 />
                 <span
                   className={`w-2 h-2 rounded-full ${
-                    d.workoutDone ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-gray-700'
+                    d.workoutDone ? 'bg-emerald-500' : 'bg-slate-300'
                   }`}
                   title="Workout"
                 />
                 <span
                   className={`w-2 h-2 rounded-full ${
-                    d.waterDone ? 'bg-cyan-500' : 'bg-slate-300 dark:bg-gray-700'
+                    d.waterDone ? 'bg-cyan-500' : 'bg-slate-300'
                   }`}
                   title="Hydration"
                 />
@@ -148,7 +148,7 @@ export const ProgressTab: React.FC = () => {
         </div>
 
         {/* Legend */}
-        <div className="flex items-center justify-center gap-4 mt-3 pt-3 border-t border-gray-200/60 dark:border-gray-800 text-[10px] text-slate-500">
+        <div className="flex items-center justify-center gap-4 mt-3 pt-3 border-t border-gray-200/80 text-[10px] text-slate-600 font-semibold">
           <div className="flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-orange-500" />
             <span>Meals</span>
@@ -168,8 +168,8 @@ export const ProgressTab: React.FC = () => {
       <div className="glass-panel rounded-3xl p-4.5 shadow-xs">
         <div className="flex items-center justify-between mb-2">
           <div>
-            <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-white">Local Data & Privacy</h3>
-            <p className="text-[11px] text-slate-500 mt-0.5">
+            <h3 className="text-xs font-black uppercase tracking-wider text-slate-900">Local Data & Privacy</h3>
+            <p className="text-[11px] text-slate-600 font-medium mt-0.5">
               100% of your data stays privately on your iPhone.
             </p>
           </div>
@@ -178,7 +178,7 @@ export const ProgressTab: React.FC = () => {
         <div className="pt-2">
           <button
             onClick={exportData}
-            className="w-full py-2.5 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 glass-btn-secondary text-slate-800 active:scale-95 cursor-pointer transition-all shadow-xs"
+            className="w-full py-2.5 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 glass-btn-secondary text-slate-900 active:scale-95 cursor-pointer transition-all shadow-xs"
           >
             <Download size={14} /> Download Backup (JSON)
           </button>

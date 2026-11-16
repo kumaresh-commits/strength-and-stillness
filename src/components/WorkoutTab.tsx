@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
-import { themes } from '../lib/themes';
 import { workoutDays, trainingNotes } from '../data/workoutPlan';
 import { WeekCalendarBar } from './WeekCalendarBar';
 import { getDayIndexFromDateStr, formatFullDate, getTodayDateStr } from '../lib/dateUtils';
@@ -15,8 +14,7 @@ import {
 } from 'lucide-react';
 
 export const WorkoutTab: React.FC = () => {
-  const { theme, currentDate, getDayLog, toggleSet, toggleWorkoutDone } = useStore();
-  const t = themes[theme];
+  const { currentDate, getDayLog, toggleSet, toggleWorkoutDone } = useStore();
 
   const dayLog = getDayLog(currentDate);
 
@@ -87,12 +85,12 @@ export const WorkoutTab: React.FC = () => {
             >
               5-Day Plan
             </span>
-            <div className="flex items-center gap-1 text-[11px] font-bold text-[#1B4332] dark:text-[#74C69D]">
+            <div className="flex items-center gap-1 text-[11px] font-bold text-[#1B4332]">
               <span>{selectedDateFormatted}</span>
             </div>
           </div>
-          <h2 className="text-lg font-black tracking-tight">Gym & Progressive Overload</h2>
-          <p className="text-xs opacity-75 mt-0.5 font-medium">
+          <h2 className="text-lg font-black tracking-tight text-slate-900">Gym & Progressive Overload</h2>
+          <p className="text-xs text-slate-600 mt-0.5 font-medium">
             Daily log automatically refreshes for each new day.
           </p>
         </div>
@@ -121,10 +119,10 @@ export const WorkoutTab: React.FC = () => {
             <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider text-white glass-btn-primary mb-1">
               <span>{currentWorkout.day} Routine</span>
             </div>
-            <h3 className="text-base font-black tracking-tight flex items-center gap-2 text-slate-800 dark:text-white">
+            <h3 className="text-base font-black tracking-tight flex items-center gap-2 text-slate-900">
               <span>{currentWorkout.muscleGroup}</span>
               {currentWorkout.isRestDay && (
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900">
                   Active Rest
                 </span>
               )}
@@ -133,21 +131,21 @@ export const WorkoutTab: React.FC = () => {
 
           {!currentWorkout.isRestDay && (
             <div className="text-right">
-              <span className="text-xs font-black text-[#1B4332] dark:text-[#74C69D]">
+              <span className="text-xs font-black text-[#1B4332]">
                 {totalCompletedSets}/{totalTargetSets} sets
               </span>
-              <div className="text-[10px] opacity-60 font-medium">Logged</div>
+              <div className="text-[10px] text-slate-500 font-medium">Logged</div>
             </div>
           )}
         </div>
 
         {/* If it's a rest day */}
         {currentWorkout.isRestDay ? (
-          <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 text-emerald-900 dark:text-emerald-200 text-xs space-y-2 border border-emerald-200/50">
-            <p className="font-bold flex items-center gap-1.5 text-xs text-[#1B4332] dark:text-emerald-300">
+          <div className="p-4 rounded-2xl bg-emerald-50 text-emerald-950 text-xs space-y-2 border border-emerald-200/60">
+            <p className="font-bold flex items-center gap-1.5 text-xs text-[#1B4332]">
               <span>🧘</span> Scheduled Active Rest & Stillness
             </p>
-            <p className="opacity-80 leading-relaxed text-[11px] font-medium">
+            <p className="text-slate-800 leading-relaxed text-[11px] font-medium">
               Muscle growth and central nervous system repair happen while you rest. Take a 30-minute light walk, perform gentle stretches in the Recovery tab, and prioritize food and 8+ hours of sleep.
             </p>
           </div>
@@ -163,10 +161,9 @@ export const WorkoutTab: React.FC = () => {
               return (
                 <div
                   key={exIdx}
-                  className="rounded-2xl p-3 border transition-all"
+                  className="rounded-2xl p-3 border transition-all glass-panel-subtle"
                   style={{
-                    backgroundColor: t.bg,
-                    borderColor: isExDone ? '#2D6A4F' : t.border,
+                    borderColor: isExDone ? '#2D6A4F' : 'rgba(255, 255, 255, 0.9)',
                   }}
                 >
                   <div className="flex items-center justify-between mb-2">
@@ -174,9 +171,9 @@ export const WorkoutTab: React.FC = () => {
                       <span className="w-5 h-5 rounded-full flex items-center justify-center font-black text-[10px] bg-[#1B4332] text-white">
                         {exIdx + 1}
                       </span>
-                      <h4 className="text-xs font-black">{exercise.name}</h4>
+                      <h4 className="text-xs font-black text-slate-900">{exercise.name}</h4>
                     </div>
-                    <div className="text-[11px] font-bold text-[#1B4332] dark:text-[#74C69D]">
+                    <div className="text-[11px] font-bold text-[#1B4332]">
                       {exercise.sets} sets × {exercise.reps} reps
                     </div>
                   </div>
@@ -242,15 +239,15 @@ export const WorkoutTab: React.FC = () => {
       <div className="glass-panel rounded-3xl p-4.5 shadow-xs">
         <div className="flex items-center gap-2 mb-2">
           <AlertTriangle size={16} className="text-[#B8860B]" />
-          <h3 className="text-xs font-black uppercase tracking-wider text-[#1B4332] dark:text-[#74C69D]">
+          <h3 className="text-xs font-black uppercase tracking-wider text-[#1B4332]">
             Coach's Training Notes
           </h3>
         </div>
         <ul className="space-y-2 mt-2">
           {trainingNotes.map((note, idx) => (
-            <li key={idx} className="text-xs flex items-start gap-2 leading-relaxed font-medium text-slate-700 dark:text-slate-200">
+            <li key={idx} className="text-xs flex items-start gap-2 leading-relaxed font-semibold text-slate-900">
               <span className="text-[#1B4332] font-black mt-0.5">•</span>
-              <span>{note}</span>
+              <span className="text-slate-900">{note}</span>
             </li>
           ))}
         </ul>

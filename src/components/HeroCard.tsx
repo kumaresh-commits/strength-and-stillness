@@ -70,7 +70,7 @@ export const HeroCard: React.FC = () => {
       {/* Header with Greeting & Veg Toggle */}
       <div className="flex items-center justify-between mb-3">
         <div>
-          <div className="flex items-center gap-1.5 text-xs font-semibold tracking-wider uppercase opacity-75">
+          <div className="flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase text-slate-600">
             <span>{dayName}, {formattedDate}</span>
             {!isViewingToday && (
               <button
@@ -86,7 +86,7 @@ export const HeroCard: React.FC = () => {
               </button>
             )}
           </div>
-          <h1 className="text-xl font-extrabold tracking-tight">
+          <h1 className="text-xl font-extrabold tracking-tight text-slate-900">
             {getGreeting()} {isViewingToday ? '🌅' : '📋'}
           </h1>
         </div>
@@ -121,24 +121,24 @@ export const HeroCard: React.FC = () => {
       >
         <div className="flex items-center justify-between mb-1">
           <div className="flex items-center gap-1.5">
-            <Sparkles size={13} className="text-amber-500 animate-pulse" />
-            <span className="text-[10px] font-black uppercase tracking-wider text-amber-600 dark:text-amber-400">
+            <Sparkles size={13} className="text-amber-600 animate-pulse" />
+            <span className="text-[10px] font-black uppercase tracking-wider text-amber-800">
               {isCustomShuffled ? 'Refreshed Quote' : "Today's Daily Wisdom"} • {currentQuote.theme}
             </span>
           </div>
-          <div className="flex items-center gap-1 text-[10px] opacity-50 font-semibold">
+          <div className="flex items-center gap-1 text-[10px] text-slate-500 font-semibold">
             <Shuffle size={10} />
             <span>Tap to cycle</span>
           </div>
         </div>
 
-        <p className="text-xs italic leading-relaxed opacity-95 font-medium">
+        <p className="text-xs italic leading-relaxed text-slate-900 font-semibold">
           "{currentQuote.text}"
         </p>
       </div>
 
       {/* Daily Progress Rings Bar */}
-      <div className="grid grid-cols-3 gap-2 pt-1 border-t border-gray-100 dark:border-gray-800">
+      <div className="grid grid-cols-3 gap-2 pt-1 border-t border-slate-200/80">
         <ProgressRing
           progress={mealsProgress}
           color={t.ring1}

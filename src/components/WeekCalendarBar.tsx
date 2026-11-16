@@ -39,8 +39,8 @@ export const WeekCalendarBar: React.FC<WeekCalendarBarProps> = ({
       {showStatusSummary && (
         <div className="flex items-center justify-between px-0.5">
           <div className="flex items-center gap-1.5">
-            <Calendar size={14} className="text-[#1B4332] dark:text-[#74C69D]" />
-            <span className="text-xs font-black tracking-tight">
+            <Calendar size={14} className="text-[#1B4332]" />
+            <span className="text-xs font-black tracking-tight text-slate-900">
               {selectedDay.fullDateLabel}
             </span>
             {isViewingToday ? (
@@ -48,11 +48,11 @@ export const WeekCalendarBar: React.FC<WeekCalendarBarProps> = ({
                 Today
               </span>
             ) : selectedDay.isPast ? (
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
                 Past History
               </span>
             ) : (
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-blue-800">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-900 border border-blue-300">
                 Upcoming Plan
               </span>
             )}
@@ -64,7 +64,7 @@ export const WeekCalendarBar: React.FC<WeekCalendarBarProps> = ({
                 sound.triggerHaptic('light');
                 syncTodayDate();
               }}
-              className="flex items-center gap-1 text-[11px] font-bold text-[#1B4332] dark:text-[#74C69D] hover:underline cursor-pointer active:scale-95 transition-all"
+              className="flex items-center gap-1 text-[11px] font-bold text-[#1B4332] hover:underline cursor-pointer active:scale-95 transition-all"
               title="Return to today's date"
             >
               <RotateCcw size={11} />

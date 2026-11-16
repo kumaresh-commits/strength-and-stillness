@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { dailyShakeRecipes, getShakeRecipeForDay } from '../data/shakeRecipes';
-import { themes } from '../lib/themes';
-import { useStore } from '../store/useStore';
 import { sound } from '../lib/sound';
 import { X, Flame, Sparkles, Clock, Lightbulb } from 'lucide-react';
 
@@ -16,9 +14,6 @@ export const ShakeModal: React.FC<ShakeModalProps> = ({
   onClose,
   initialDayIndex = new Date().getDay(),
 }) => {
-  const { theme } = useStore();
-  const t = themes[theme];
-
   const [selectedDayIndex, setSelectedDayIndex] = useState<number>(initialDayIndex);
 
   if (!isOpen) return null;
@@ -58,7 +53,7 @@ export const ShakeModal: React.FC<ShakeModalProps> = ({
         </div>
 
         {/* 7-Day Day Selector Bar */}
-        <div className="px-3 py-2 bg-gray-50 dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+        <div className="px-3 py-2 bg-slate-100/80 border-b border-slate-200/80 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
           {dailyShakeRecipes.map((r) => {
             const isSelected = r.dayIndex === selectedDayIndex;
             const isToday = r.dayIndex === todayDayIndex;
@@ -72,9 +67,9 @@ export const ShakeModal: React.FC<ShakeModalProps> = ({
                 }}
                 className="flex-shrink-0 px-2.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 transition-all cursor-pointer border shadow-2xs relative"
                 style={{
-                  backgroundColor: isSelected ? '#1B4332' : t.card,
-                  color: isSelected ? '#FFFFFF' : t.text,
-                  borderColor: isSelected ? '#1B4332' : t.border,
+                  backgroundColor: isSelected ? '#1B4332' : 'rgba(255, 255, 255, 0.85)',
+                  color: isSelected ? '#FFFFFF' : '#0F172A',
+                  borderColor: isSelected ? '#1B4332' : 'rgba(255, 255, 255, 0.9)',
                 }}
               >
                 {isToday && (
@@ -90,43 +85,40 @@ export const ShakeModal: React.FC<ShakeModalProps> = ({
         {/* Scrollable Content Body */}
         <div className="p-4 overflow-y-auto space-y-3.5 flex-1 text-xs">
           {/* Tagline */}
-          <p className="text-xs opacity-85 font-medium leading-relaxed italic border-l-2 border-[#1B4332] pl-2.5">
+          <p className="text-xs text-slate-800 font-medium leading-relaxed italic border-l-2 border-[#1B4332] pl-2.5">
             "{currentRecipe.tagline}"
           </p>
 
           {/* Real-Time Nutrition Grid Badges */}
           <div className="grid grid-cols-4 gap-1.5 text-center">
-            <div className="p-2 rounded-xl bg-orange-50 dark:bg-orange-950/40 border border-orange-200/50">
-              <span className="text-[9px] font-black uppercase text-orange-700 dark:text-orange-300 block">Energy</span>
-              <span className="text-sm font-black text-orange-800 dark:text-orange-400">{currentRecipe.calories}</span>
-              <span className="text-[9px] opacity-70 block font-bold">kcal</span>
+            <div className="p-2 rounded-xl bg-orange-50 border border-orange-200/60">
+              <span className="text-[9px] font-black uppercase text-orange-800 block">Energy</span>
+              <span className="text-sm font-black text-orange-950">{currentRecipe.calories}</span>
+              <span className="text-[9px] text-orange-800/80 block font-bold">kcal</span>
             </div>
 
-            <div className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/50">
-              <span className="text-[9px] font-black uppercase text-emerald-700 dark:text-emerald-300 block">Protein</span>
-              <span className="text-sm font-black text-[#1B4332] dark:text-emerald-400">{currentRecipe.protein}g</span>
-              <span className="text-[9px] opacity-70 block font-bold">muscle fuel</span>
+            <div className="p-2 rounded-xl bg-emerald-50 border border-emerald-200/60">
+              <span className="text-[9px] font-black uppercase text-emerald-800 block">Protein</span>
+              <span className="text-sm font-black text-[#1B4332]">{currentRecipe.protein}g</span>
+              <span className="text-[9px] text-emerald-800/80 block font-bold">muscle fuel</span>
             </div>
 
-            <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200/50">
-              <span className="text-[9px] font-black uppercase text-blue-700 dark:text-blue-300 block">Carbs</span>
-              <span className="text-sm font-black text-blue-800 dark:text-blue-400">{currentRecipe.carbs}g</span>
-              <span className="text-[9px] opacity-70 block font-bold">glycogen</span>
+            <div className="p-2 rounded-xl bg-blue-50 border border-blue-200/60">
+              <span className="text-[9px] font-black uppercase text-blue-800 block">Carbs</span>
+              <span className="text-sm font-black text-blue-950">{currentRecipe.carbs}g</span>
+              <span className="text-[9px] text-blue-800/80 block font-bold">glycogen</span>
             </div>
 
-            <div className="p-2 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/50">
-              <span className="text-[9px] font-black uppercase text-amber-700 dark:text-amber-300 block">Healthy Fat</span>
-              <span className="text-sm font-black text-amber-800 dark:text-amber-400">{currentRecipe.fats}g</span>
-              <span className="text-[9px] opacity-70 block font-bold">hormones</span>
+            <div className="p-2 rounded-xl bg-amber-50 border border-amber-200/60">
+              <span className="text-[9px] font-black uppercase text-amber-800 block">Healthy Fat</span>
+              <span className="text-sm font-black text-amber-950">{currentRecipe.fats}g</span>
+              <span className="text-[9px] text-amber-800/80 block font-bold">hormones</span>
             </div>
           </div>
 
           {/* Ingredients Section */}
-          <div
-            className="p-3.5 rounded-2xl border"
-            style={{ backgroundColor: t.bg, borderColor: t.border }}
-          >
-            <div className="flex items-center gap-1.5 font-black text-xs text-[#1B4332] dark:text-[#74C69D] mb-2 uppercase tracking-wider">
+          <div className="p-3.5 rounded-2xl glass-panel-subtle shadow-xs">
+            <div className="flex items-center gap-1.5 font-black text-xs text-[#1B4332] mb-2 uppercase tracking-wider">
               <Sparkles size={14} />
               <span>Exact Ingredients</span>
             </div>
@@ -135,13 +127,13 @@ export const ShakeModal: React.FC<ShakeModalProps> = ({
               {currentRecipe.ingredients.map((ing, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center justify-between py-1 border-b border-gray-100 dark:border-gray-800 last:border-none"
+                  className="flex items-center justify-between py-1 border-b border-gray-200/70 last:border-none"
                 >
-                  <span className="font-semibold text-xs flex items-center gap-1.5">
+                  <span className="font-bold text-xs flex items-center gap-1.5 text-slate-900">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#1B4332]" />
                     {ing.name}
                   </span>
-                  <span className="font-black text-[11px] px-2 py-0.5 rounded-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                  <span className="font-black text-[11px] px-2 py-0.5 rounded-md bg-white text-slate-900 border border-slate-200 shadow-2xs">
                     {ing.amount}
                   </span>
                 </div>
@@ -150,11 +142,8 @@ export const ShakeModal: React.FC<ShakeModalProps> = ({
           </div>
 
           {/* Instructions Step-by-Step */}
-          <div
-            className="p-3.5 rounded-2xl border"
-            style={{ backgroundColor: t.bg, borderColor: t.border }}
-          >
-            <div className="flex items-center gap-1.5 font-black text-xs text-[#1B4332] dark:text-[#74C69D] mb-2 uppercase tracking-wider">
+          <div className="p-3.5 rounded-2xl glass-panel-subtle shadow-xs">
+            <div className="flex items-center gap-1.5 font-black text-xs text-[#1B4332] mb-2 uppercase tracking-wider">
               <Flame size={14} />
               <span>How To Blend</span>
             </div>
@@ -165,16 +154,16 @@ export const ShakeModal: React.FC<ShakeModalProps> = ({
                   <span className="w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center bg-[#1B4332] text-white font-black text-[10px] mt-0.5">
                     {idx + 1}
                   </span>
-                  <span className="font-medium text-xs">{step}</span>
+                  <span className="font-semibold text-xs text-slate-900">{step}</span>
                 </li>
               ))}
             </ol>
           </div>
 
           {/* Coach's Pro Tip */}
-          <div className="p-3 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 border border-amber-200/60 flex items-start gap-2">
+          <div className="p-3 rounded-2xl bg-amber-50 text-amber-950 border border-amber-200/70 flex items-start gap-2">
             <Lightbulb size={16} className="text-[#B8860B] flex-shrink-0 mt-0.5" />
-            <div className="text-[11px] leading-relaxed">
+            <div className="text-[11px] leading-relaxed text-slate-900">
               <strong className="font-bold text-[#B8860B] block">Coach's Absorption Tip:</strong>
               {currentRecipe.coachTip}
             </div>
@@ -182,8 +171,8 @@ export const ShakeModal: React.FC<ShakeModalProps> = ({
         </div>
 
         {/* Modal Bottom Bar */}
-        <div className="p-3 bg-gray-50 dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
-          <span className="text-[10px] font-bold opacity-60">
+        <div className="p-3 bg-slate-100/90 border-t border-slate-200 flex items-center justify-between">
+          <span className="text-[10px] font-bold text-slate-600">
             {currentRecipe.dayName}'s Recipe Selected
           </span>
           <button

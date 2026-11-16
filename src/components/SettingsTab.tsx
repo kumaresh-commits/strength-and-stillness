@@ -143,7 +143,7 @@ export const SettingsTab: React.FC = () => {
           className={`py-2 rounded-xl text-xs font-bold transition-all flex flex-col items-center gap-0.5 cursor-pointer ${
             activeSection === 'reminders'
               ? 'glass-btn-primary text-white shadow-xs'
-              : 'text-slate-600 dark:text-slate-300 opacity-80'
+              : 'text-slate-700 font-bold'
           }`}
         >
           <Clock size={15} />
@@ -158,7 +158,7 @@ export const SettingsTab: React.FC = () => {
           className={`py-2 rounded-xl text-xs font-bold transition-all flex flex-col items-center gap-0.5 cursor-pointer ${
             activeSection === 'goals'
               ? 'glass-btn-primary text-white shadow-xs'
-              : 'text-slate-600 dark:text-slate-300 opacity-80'
+              : 'text-slate-700 font-bold'
           }`}
         >
           <Target size={15} />
@@ -173,7 +173,7 @@ export const SettingsTab: React.FC = () => {
           className={`py-2 rounded-xl text-xs font-bold transition-all flex flex-col items-center gap-0.5 cursor-pointer ${
             activeSection === 'notifications'
               ? 'glass-btn-primary text-white shadow-xs'
-              : 'text-slate-600 dark:text-slate-300 opacity-80'
+              : 'text-slate-700 font-bold'
           }`}
         >
           <Bell size={15} />
@@ -188,7 +188,7 @@ export const SettingsTab: React.FC = () => {
           className={`py-2 rounded-xl text-xs font-bold transition-all flex flex-col items-center gap-0.5 cursor-pointer ${
             activeSection === 'theme'
               ? 'glass-btn-primary text-white shadow-xs'
-              : 'text-slate-600 dark:text-slate-300 opacity-80'
+              : 'text-slate-700 font-bold'
           }`}
         >
           <Palette size={15} />
@@ -200,7 +200,7 @@ export const SettingsTab: React.FC = () => {
       {activeSection === 'reminders' && (
         <div className="space-y-3 animate-fade-in">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-extrabold uppercase tracking-wider text-[#1B4332] dark:text-[#74C69D]">
+            <span className="text-xs font-extrabold uppercase tracking-wider text-[#1B4332]">
               Routine Reminders ({reminders.filter((r) => r.enabled).length}/{reminders.length})
             </span>
             <button
@@ -208,8 +208,7 @@ export const SettingsTab: React.FC = () => {
                 sound.triggerHaptic('light');
                 setShowAddReminderModal(true);
               }}
-              className="text-xs font-black px-3 py-1 rounded-xl text-white shadow-xs flex items-center gap-1 active:scale-95 cursor-pointer"
-              style={{ backgroundColor: '#1B4332' }}
+              className="text-xs font-black px-3 py-1 rounded-xl text-white shadow-xs flex items-center gap-1 active:scale-95 cursor-pointer glass-btn-primary"
             >
               + Add Reminder
             </button>
@@ -242,8 +241,8 @@ export const SettingsTab: React.FC = () => {
                     </div>
 
                     <div>
-                      <h4 className="text-xs font-black tracking-tight text-slate-800 dark:text-white">{r.label}</h4>
-                      <p className="text-[11px] text-slate-500 font-medium truncate max-w-[150px]">
+                      <h4 className="text-xs font-black tracking-tight text-slate-900">{r.label}</h4>
+                      <p className="text-[11px] text-slate-600 font-medium truncate max-w-[150px]">
                         {r.message}
                       </p>
                     </div>
@@ -252,7 +251,7 @@ export const SettingsTab: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => testReminder(r)}
-                      className="p-1.5 rounded-xl glass-btn-secondary text-[10px] font-bold cursor-pointer text-[#1B4332] dark:text-[#74C69D]"
+                      className="p-1.5 rounded-xl glass-btn-secondary text-[10px] font-bold cursor-pointer text-[#1B4332]"
                       title="Test this reminder alert"
                     >
                       <Play size={12} />
@@ -265,7 +264,7 @@ export const SettingsTab: React.FC = () => {
                           removeReminder(r.id);
                           toast.info(`Removed "${r.label}"`);
                         }}
-                        className="p-1.5 rounded-xl text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 cursor-pointer"
+                        className="p-1.5 rounded-xl text-rose-600 hover:bg-rose-50 cursor-pointer"
                         title="Delete custom reminder"
                       >
                         <Trash2 size={13} />
@@ -278,7 +277,7 @@ export const SettingsTab: React.FC = () => {
                         updateReminder(r.id, { enabled: !r.enabled });
                       }}
                       className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer ${
-                        r.enabled ? 'glass-btn-primary' : 'bg-slate-300 dark:bg-slate-700'
+                        r.enabled ? 'glass-btn-primary' : 'bg-slate-300'
                       }`}
                     >
                       <span
@@ -301,12 +300,12 @@ export const SettingsTab: React.FC = () => {
                 style={{ backgroundColor: t.card, borderColor: '#1B4332' }}
               >
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-black flex items-center gap-1.5">
+                  <h3 className="text-sm font-black flex items-center gap-1.5 text-slate-900">
                     <Clock size={16} className="text-[#1B4332]" /> Add Custom Reminder
                   </h3>
                   <button
                     onClick={() => setShowAddReminderModal(false)}
-                    className="w-6 h-6 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 text-xs font-bold"
+                    className="w-6 h-6 rounded-full flex items-center justify-center bg-slate-200 text-slate-800 text-xs font-bold"
                   >
                     ✕
                   </button>
@@ -314,19 +313,18 @@ export const SettingsTab: React.FC = () => {
 
                 <div className="space-y-3 text-xs">
                   <div>
-                    <label className="font-bold opacity-80 block mb-1">Reminder Name</label>
+                    <label className="font-bold text-slate-800 block mb-1">Reminder Name</label>
                     <input
                       type="text"
                       placeholder="e.g. Creatine / Evening Walk"
                       value={newLabel}
                       onChange={(e) => setNewLabel(e.target.value)}
-                      className="w-full p-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 font-bold outline-none border border-transparent focus:border-[#1B4332]"
-                      style={{ color: t.text }}
+                      className="w-full p-2.5 rounded-xl bg-slate-100 text-slate-900 font-bold outline-none border border-transparent focus:border-[#1B4332]"
                     />
                   </div>
 
                   <div>
-                    <label className="font-bold opacity-80 block mb-1">Time (24h or AM/PM)</label>
+                    <label className="font-bold text-slate-800 block mb-1">Time (24h or AM/PM)</label>
                     <input
                       type="time"
                       value={newTime}
@@ -336,21 +334,20 @@ export const SettingsTab: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="font-bold opacity-80 block mb-1">Alert Message</label>
+                    <label className="font-bold text-slate-800 block mb-1">Alert Message</label>
                     <input
                       type="text"
                       placeholder="e.g. Take creatine with water & electrolytes"
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
-                      className="w-full p-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 font-medium outline-none"
-                      style={{ color: t.text }}
+                      className="w-full p-2.5 rounded-xl bg-slate-100 text-slate-900 font-medium outline-none"
                     />
                   </div>
 
                   <div className="pt-2 flex gap-2">
                     <button
                       onClick={() => setShowAddReminderModal(false)}
-                      className="flex-1 py-2.5 rounded-xl font-bold bg-gray-100 dark:bg-gray-800"
+                      className="flex-1 py-2.5 rounded-xl font-bold bg-slate-200 text-slate-800"
                     >
                       Cancel
                     </button>
@@ -387,7 +384,7 @@ export const SettingsTab: React.FC = () => {
           )}
 
           {/* iOS Tip Card */}
-          <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200 text-xs border border-emerald-200/50">
+          <div className="p-3.5 rounded-2xl bg-emerald-50 text-emerald-950 text-xs border border-emerald-200/60">
             💡 <strong>Custom Timings Tip:</strong> Tap on any dark-green time pill (e.g. <code>07:15 AM</code>) to change the timing to your exact schedule.
           </div>
         </div>
@@ -398,7 +395,7 @@ export const SettingsTab: React.FC = () => {
         <div className="space-y-4 animate-fade-in">
           {/* Quick Presets */}
           <div>
-            <span className="text-xs font-black uppercase tracking-wider text-[#1B4332] dark:text-[#74C69D] block mb-2">
+            <span className="text-xs font-black uppercase tracking-wider text-[#1B4332] block mb-2">
               Goal Presets
             </span>
             <div className="grid grid-cols-3 gap-2">
@@ -408,8 +405,8 @@ export const SettingsTab: React.FC = () => {
                 style={{ backgroundColor: t.card, borderColor: '#1B4332' }}
               >
                 <span className="text-lg">🥩</span>
-                <div className="text-xs font-black mt-1">Lean Bulk</div>
-                <span className="text-[10px] font-semibold opacity-70">2,800 kcal</span>
+                <div className="text-xs font-black mt-1 text-slate-900">Lean Bulk</div>
+                <span className="text-[10px] font-semibold text-slate-600">2,800 kcal</span>
               </button>
 
               <button
@@ -418,8 +415,8 @@ export const SettingsTab: React.FC = () => {
                 style={{ backgroundColor: t.card, borderColor: t.border }}
               >
                 <span className="text-lg">⚖️</span>
-                <div className="text-xs font-black mt-1">Maintain</div>
-                <span className="text-[10px] font-semibold opacity-70">2,400 kcal</span>
+                <div className="text-xs font-black mt-1 text-slate-900">Maintain</div>
+                <span className="text-[10px] font-semibold text-slate-600">2,400 kcal</span>
               </button>
 
               <button
@@ -428,8 +425,8 @@ export const SettingsTab: React.FC = () => {
                 style={{ backgroundColor: t.card, borderColor: t.border }}
               >
                 <span className="text-lg">🧘</span>
-                <div className="text-xs font-black mt-1">Recovery</div>
-                <span className="text-[10px] font-semibold opacity-70">Deep Rest</span>
+                <div className="text-xs font-black mt-1 text-slate-900">Recovery</div>
+                <span className="text-[10px] font-semibold text-slate-600">Deep Rest</span>
               </button>
             </div>
           </div>
@@ -445,10 +442,10 @@ export const SettingsTab: React.FC = () => {
             {/* Calorie Target */}
             <div>
               <div className="flex justify-between text-xs font-bold mb-1">
-                <span className="flex items-center gap-1.5 font-black">
+                <span className="flex items-center gap-1.5 font-black text-slate-900">
                   <Flame size={14} className="text-[#1B4332]" /> Daily Calories
                 </span>
-                <span className="font-extrabold text-[#1B4332] dark:text-[#74C69D]">{dailyGoals.calories} kcal</span>
+                <span className="font-extrabold text-[#1B4332]">{dailyGoals.calories} kcal</span>
               </div>
               <input
                 type="range"
@@ -464,10 +461,10 @@ export const SettingsTab: React.FC = () => {
             {/* Protein Target */}
             <div>
               <div className="flex justify-between text-xs font-bold mb-1">
-                <span className="flex items-center gap-1.5 font-black">
+                <span className="flex items-center gap-1.5 font-black text-slate-900">
                   <Sparkles size={14} className="text-[#B8860B]" /> Protein Target
                 </span>
-                <span className="font-extrabold text-[#B8860B] dark:text-[#D4AF37]">{dailyGoals.protein}g</span>
+                <span className="font-extrabold text-[#B8860B]">{dailyGoals.protein}g</span>
               </div>
               <input
                 type="range"
@@ -655,7 +652,7 @@ export const SettingsTab: React.FC = () => {
       {/* SECTION 4: THEME SELECTOR */}
       {activeSection === 'theme' && (
         <div className="space-y-3 animate-fade-in">
-          <span className="text-xs font-black uppercase tracking-wider text-[#1B4332] dark:text-[#74C69D] block">
+          <span className="text-xs font-black uppercase tracking-wider text-[#1B4332] block">
             Choose Your Color Palette
           </span>
 
