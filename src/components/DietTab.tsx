@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
 import { themes } from '../lib/themes';
-import { weeklyDietPlans, foodRules, getDietPlanForDay, weeklyGroceryList } from '../data/dietPlan';
+import { foodRules, getDietPlanForDay, weeklyGroceryList } from '../data/dietPlan';
 import { ShakeModal } from './ShakeModal';
+import { WeekCalendarBar } from './WeekCalendarBar';
+import { getDayIndexFromDateStr } from '../lib/dateUtils';
 import { sound } from '../lib/sound';
 import { toast } from 'sonner';
 import {
@@ -37,17 +39,14 @@ export const DietTab: React.FC = () => {
   const t = themes[theme];
   const dayLog = getDayLog(currentDate);
 
-  // Automatically detect today's day of the week (0=Sun, 1=Mon, ..., 6=Sat)
-  const currentDayOfWeek = new Date().getDay();
-  const [selectedDayIndex, setSelectedDayIndex] = useState<number>(currentDayOfWeek);
+  // Derive active day plan dynamically from the selected currentDate
+  const selectedDayIndex = getDayIndexFromDateStr(currentDate);
+  const activePlan = getDietPlanForDay(selectedDayIndex);
 
   const [showShakeModal, setShowShakeModal] = useState(false);
   const [showGroceryModal, setShowGroceryModal] = useState(false);
   const [showRules, setShowRules] = useState(false);
   const [checkedGroceries, setCheckedGroceries] = useState<string[]>([]);
-
-  // Active day's Indian meal plan
-  const activePlan = getDietPlanForDay(selectedDayIndex);
 
   // Exact Calorie and Protein Dynamic Decreasing Calculations
   const planTotalCalories = activePlan.meals.reduce(
@@ -160,37 +159,8 @@ export const DietTab: React.FC = () => {
         </button>
       </div>
 
-      {/* Horizontal 7-Day Indian Menu Switcher */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
-        {weeklyDietPlans.map((plan) => {
-          const isSelected = plan.dayIndex === selectedDayIndex;
-          const isToday = plan.dayIndex === currentDayOfWeek;
-
-          return (
-            <button
-              key={plan.dayId}
-              onClick={() => {
-                sound.triggerHaptic('light');
-                setSelectedDayIndex(plan.dayIndex);
-              }}
-              className="flex-shrink-0 px-3 py-2 rounded-2xl flex flex-col items-center min-w-[58px] transition-all cursor-pointer border shadow-xs relative"
-              style={{
-                backgroundColor: isSelected ? '#1B4332' : t.card,
-                color: isSelected ? '#FFFFFF' : t.text,
-                borderColor: isSelected ? '#1B4332' : t.border,
-              }}
-            >
-              {isToday && (
-                <span className="w-2 h-2 rounded-full bg-[#D4AF37] absolute top-1.5 right-1.5" title="Today's Meal Plan" />
-              )}
-              <span className="text-xs font-black">{plan.dayName.slice(0, 3)}</span>
-              <span className="text-[9px] opacity-70 font-semibold mt-0.5">
-                {isToday ? 'Today' : 'Plan'}
-              </span>
-            </button>
-          );
-        })}
-      </div>
+      {/* Dynamic 7-Day Week Calendar Switcher with exact dates & completion history */}
+      <WeekCalendarBar className="my-1" />
 
       {/* Active Day Theme Banner */}
       <div

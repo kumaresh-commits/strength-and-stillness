@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
 import { themes } from '../lib/themes';
 import { workoutDays, trainingNotes } from '../data/workoutPlan';
+import { WeekCalendarBar } from './WeekCalendarBar';
+import { getDayIndexFromDateStr, formatFullDate, getTodayDateStr } from '../lib/dateUtils';
 import { sound } from '../lib/sound';
 import RestTimer from './RestTimer';
 import { toast } from 'sonner';
@@ -10,41 +12,27 @@ import {
   Timer,
   AlertTriangle,
   Trophy,
-  Calendar,
 } from 'lucide-react';
 
 export const WorkoutTab: React.FC = () => {
-  const { theme, currentDate, getDayLog, toggleSet, toggleWorkoutDone, syncTodayDate } = useStore();
+  const { theme, currentDate, getDayLog, toggleSet, toggleWorkoutDone } = useStore();
   const t = themes[theme];
-
-  // Always ensure today's real date is synchronized on load
-  useEffect(() => {
-    syncTodayDate();
-  }, [syncTodayDate]);
 
   const dayLog = getDayLog(currentDate);
 
-  // Format today's human-readable date
-  const dateObj = new Date();
-  const todayFormatted = dateObj.toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'short',
-    day: 'numeric',
-  });
+  // Format the selected date label (e.g. "Monday, Nov 16" or "Wednesday, Nov 18")
+  const selectedDateFormatted = formatFullDate(currentDate);
+  const isViewingToday = currentDate === getTodayDateStr();
 
-  // Default workout matches today's day of the week (0=Sun, 1=Mon, ..., 6=Sat)
-  const currentDayOfWeek = dateObj.getDay();
-  const [selectedDayId, setSelectedDayId] = useState<string>(() => {
-    const match = workoutDays.find((d) => d.dayIndex === currentDayOfWeek);
-    return match ? match.id : 'monday';
-  });
+  // Derive workout dynamically based on selected date
+  const selectedDayIndex = getDayIndexFromDateStr(currentDate);
+  const currentWorkout = workoutDays.find((d) => d.dayIndex === selectedDayIndex) || workoutDays[0];
+  const selectedDayId = currentWorkout.id;
 
   // Rest Timer State
   const [timerOpen, setTimerOpen] = useState(false);
   const [timerSeconds, setTimerSeconds] = useState(60);
 
-  // Active workout day object
-  const currentWorkout = workoutDays.find((d) => d.id === selectedDayId) || workoutDays[0];
   const completedSetsForDay = dayLog.completedSets[selectedDayId] || [];
 
   // Calculate total sets for this workout
@@ -77,8 +65,10 @@ export const WorkoutTab: React.FC = () => {
 
     if (nextState) {
       sound.playSuccess();
-      toast.success('Workout Completed Today! 🏆🔥', {
-        description: 'Great discipline! Tomorrow, a fresh workout form will open automatically.',
+      toast.success(`Workout Completed on ${currentWorkout.day}! 🏆🔥`, {
+        description: isViewingToday
+          ? 'Great discipline! Tomorrow, a fresh workout form will open automatically.'
+          : 'Historical workout record updated.',
       });
     } else {
       toast.info('Workout marked in-progress');
@@ -98,8 +88,7 @@ export const WorkoutTab: React.FC = () => {
               5-Day Plan
             </span>
             <div className="flex items-center gap-1 text-[11px] font-bold text-[#1B4332] dark:text-[#74C69D]">
-              <Calendar size={12} />
-              <span>{todayFormatted}</span>
+              <span>{selectedDateFormatted}</span>
             </div>
           </div>
           <h2 className="text-lg font-black tracking-tight">Gym & Progressive Overload</h2>
@@ -125,35 +114,8 @@ export const WorkoutTab: React.FC = () => {
         </button>
       </div>
 
-      {/* Horizontal Day Switcher with Dark Green Active Chip */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
-        {workoutDays.map((day) => {
-          const isSelected = day.id === selectedDayId;
-          const isToday = day.dayIndex === currentDayOfWeek;
-
-          return (
-            <button
-              key={day.id}
-              onClick={() => {
-                sound.triggerHaptic('light');
-                setSelectedDayId(day.id);
-              }}
-              className="flex-shrink-0 px-3 py-2 rounded-2xl flex flex-col items-center min-w-[58px] transition-all cursor-pointer border shadow-xs relative"
-              style={{
-                backgroundColor: isSelected ? '#1B4332' : t.card,
-                color: isSelected ? '#FFFFFF' : t.text,
-                borderColor: isSelected ? '#1B4332' : t.border,
-              }}
-            >
-              {isToday && (
-                <span className="w-2 h-2 rounded-full bg-[#D4AF37] absolute top-1.5 right-1.5" title="Today" />
-              )}
-              <span className="text-sm">{day.emoji}</span>
-              <span className="text-[11px] font-black mt-0.5">{day.day.slice(0, 3)}</span>
-            </button>
-          );
-        })}
-      </div>
+      {/* Dynamic 7-Day Week Calendar Switcher with exact dates & completion history */}
+      <WeekCalendarBar className="my-1" />
 
       {/* Selected Day Workout Focus Card */}
       <div
@@ -272,17 +234,19 @@ export const WorkoutTab: React.FC = () => {
                 {dayLog.workoutDone ? (
                   <>
                     <CheckCircle2 size={18} className="text-[#D4AF37]" />
-                    <span>Workout Completed Today! ✓ (Tap to Undo)</span>
+                    <span>Workout Completed on {currentWorkout.day}! ✓ (Tap to Undo)</span>
                   </>
                 ) : (
                   <>
                     <Trophy size={18} />
-                    <span>Mark Workout Completed Today</span>
+                    <span>Mark {currentWorkout.day} Workout Completed</span>
                   </>
                 )}
               </button>
               <p className="text-[10px] text-center opacity-65 font-medium mt-1.5">
-                Tomorrow's workout will automatically open with a fresh clean form!
+                {isViewingToday
+                  ? "Tomorrow's workout will automatically open with a fresh clean form!"
+                  : `Viewing saved workout history for ${selectedDateFormatted}`}
               </p>
             </div>
           </div>

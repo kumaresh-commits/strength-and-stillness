@@ -25,7 +25,10 @@ export const ProgressTab: React.FC = () => {
   const past7Days = Array.from({ length: 7 }).map((_, i) => {
     const d = new Date();
     d.setDate(today.getDate() - (6 - i));
-    const dateStr = d.toISOString().split('T')[0];
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const dayNumStr = String(d.getDate()).padStart(2, '0');
+    const dateStr = `${year}-${month}-${dayNumStr}`;
     const log = dayLogs[dateStr];
     return {
       dateStr,

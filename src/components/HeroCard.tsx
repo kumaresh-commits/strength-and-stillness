@@ -2,12 +2,13 @@ import React, { useState, useMemo } from 'react';
 import { useStore } from '../store/useStore';
 import { themes } from '../lib/themes';
 import { getDailyQuote, dailyQuotes } from '../data/dailyQuotes';
+import { parseDateStr, getTodayDateStr } from '../lib/dateUtils';
 import ProgressRing from './ProgressRing';
-import { Sparkles, Utensils, Dumbbell, Droplets, Leaf, Shuffle } from 'lucide-react';
+import { Sparkles, Utensils, Dumbbell, Droplets, Leaf, Shuffle, RotateCcw } from 'lucide-react';
 import { sound } from '../lib/sound';
 
 export const HeroCard: React.FC = () => {
-  const { theme, isVegetarian, toggleVegetarian, currentDate, getDayLog, dailyGoals } = useStore();
+  const { theme, isVegetarian, toggleVegetarian, currentDate, syncTodayDate, getDayLog, dailyGoals } = useStore();
   const t = themes[theme];
 
   // Daily dynamic quote based on calendar date
@@ -33,12 +34,19 @@ export const HeroCard: React.FC = () => {
   // Water
   const waterProgress = (dayLog.waterGlasses || 0) / (dailyGoals.waterGlasses || 8);
 
-  const dateObj = new Date();
-  const dayName = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
-  const formattedDate = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  // Dynamic Date parsing based on selected currentDate
+  const selectedDateObj = parseDateStr(currentDate);
+  const dayName = selectedDateObj.toLocaleDateString('en-US', { weekday: 'long' });
+  const formattedDate = selectedDateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const todayStr = getTodayDateStr();
+  const isViewingToday = currentDate === todayStr;
 
   const getGreeting = () => {
-    const hour = dateObj.getHours();
+    if (!isViewingToday) {
+      if (currentDate < todayStr) return `${dayName} History`;
+      return `${dayName} Routine`;
+    }
+    const hour = new Date().getHours();
     if (hour < 12) return 'Good morning';
     if (hour < 17) return 'Good afternoon';
     return 'Good evening';
@@ -68,11 +76,24 @@ export const HeroCard: React.FC = () => {
       {/* Header with Greeting & Veg Toggle */}
       <div className="flex items-center justify-between mb-3">
         <div>
-          <div className="flex items-center gap-1.5 text-xs font-semibold tracking-wider uppercase opacity-70">
+          <div className="flex items-center gap-1.5 text-xs font-semibold tracking-wider uppercase opacity-75">
             <span>{dayName}, {formattedDate}</span>
+            {!isViewingToday && (
+              <button
+                onClick={() => {
+                  sound.triggerHaptic('light');
+                  syncTodayDate();
+                }}
+                className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-[#1B4332] text-white hover:opacity-90 active:scale-95 transition-all cursor-pointer"
+                title="Tap to jump back to today"
+              >
+                <RotateCcw size={9} />
+                <span>Today</span>
+              </button>
+            )}
           </div>
           <h1 className="text-xl font-extrabold tracking-tight">
-            {getGreeting()} 🌅
+            {getGreeting()} {isViewingToday ? '🌅' : '📋'}
           </h1>
         </div>
 

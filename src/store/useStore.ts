@@ -1,5 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { getTodayDateStr, getDayIdFromDateStr } from '../lib/dateUtils';
+
+export { getTodayDateStr };
 
 export type ThemeMode = 'dawn' | 'cyber' | 'ayurvedic';
 
@@ -85,14 +88,6 @@ interface AppState {
   getDayLog: (date: string) => DayLog;
 }
 
-export const getTodayDateStr = () => {
-  const d = new Date();
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
-
 const defaultDayLog: DayLog = {
   completedMeals: [],
   completedSets: {},
@@ -159,21 +154,60 @@ export const useStore = create<AppState>()(
       setCurrentDate: (date) => set({ currentDate: date }),
       syncTodayDate: () => set({ currentDate: getTodayDateStr() }),
 
-      getDayLog: (date) => get().dayLogs[date] || { ...defaultDayLog },
+      getDayLog: (date) => {
+        const logs = get().dayLogs;
+        const exact = logs[date];
+        if (
+          exact &&
+          ((exact.completedMeals && exact.completedMeals.length > 0) ||
+            Object.values(exact.completedSets || {}).some((s) => s.length > 0) ||
+            exact.workoutDone)
+        ) {
+          return exact;
+        }
+
+        // Smart historical fallback: if the requested date is empty, check if activities for this day were logged under another date
+        const dayId = getDayIdFromDateStr(date); // e.g. 'monday'
+        const dayPrefix = dayId.slice(0, 3) + '-'; // e.g. 'mon-'
+
+        for (const [otherDate, otherLog] of Object.entries(logs)) {
+          if (otherDate !== date && otherLog) {
+            const matchingMeals = (otherLog.completedMeals || []).filter((m) =>
+              m.startsWith(dayPrefix)
+            );
+            const matchingSets = otherLog.completedSets?.[dayId] || [];
+
+            if (matchingMeals.length > 0 || matchingSets.length > 0) {
+              return {
+                completedMeals: matchingMeals.length > 0 ? matchingMeals : (exact?.completedMeals || []),
+                completedSets: matchingSets.length > 0 ? { [dayId]: matchingSets } : (exact?.completedSets || {}),
+                waterGlasses: exact?.waterGlasses || 0,
+                sleepHours: exact?.sleepHours || 0,
+                steps: exact?.steps || 0,
+                workoutDone: exact?.workoutDone || (matchingSets.length > 0 && otherLog.workoutDone) || false,
+              };
+            }
+          }
+        }
+
+        return exact || { ...defaultDayLog };
+      },
 
       toggleMeal: (date, mealId) =>
         set((s) => {
-          const log = s.dayLogs[date] || { ...defaultDayLog };
-          const meals = log.completedMeals.includes(mealId)
-            ? log.completedMeals.filter((m) => m !== mealId)
-            : [...log.completedMeals, mealId];
+          const log = s.getDayLog(date);
+          const currentMeals = log.completedMeals || [];
+          const meals = currentMeals.includes(mealId)
+            ? currentMeals.filter((m) => m !== mealId)
+            : [...currentMeals, mealId];
           return { dayLogs: { ...s.dayLogs, [date]: { ...log, completedMeals: meals } } };
         }),
 
       toggleSet: (date, dayId, exerciseIndex, setIndex, weight) =>
         set((s) => {
-          const log = s.dayLogs[date] || { ...defaultDayLog };
-          const daySets = log.completedSets[dayId] || [];
+          const log = s.getDayLog(date);
+          const currentSets = log.completedSets || {};
+          const daySets = currentSets[dayId] || [];
           const exists = daySets.find(
             (cs) => cs.exerciseIndex === exerciseIndex && cs.setIndex === setIndex
           );
@@ -185,32 +219,32 @@ export const useStore = create<AppState>()(
           return {
             dayLogs: {
               ...s.dayLogs,
-              [date]: { ...log, completedSets: { ...log.completedSets, [dayId]: newSets } },
+              [date]: { ...log, completedSets: { ...currentSets, [dayId]: newSets } },
             },
           };
         }),
 
       setWaterGlasses: (date, glasses) =>
         set((s) => {
-          const log = s.dayLogs[date] || { ...defaultDayLog };
+          const log = s.getDayLog(date);
           return { dayLogs: { ...s.dayLogs, [date]: { ...log, waterGlasses: glasses } } };
         }),
 
       setSleepHours: (date, hours) =>
         set((s) => {
-          const log = s.dayLogs[date] || { ...defaultDayLog };
+          const log = s.getDayLog(date);
           return { dayLogs: { ...s.dayLogs, [date]: { ...log, sleepHours: hours } } };
         }),
 
       setSteps: (date, steps) =>
         set((s) => {
-          const log = s.dayLogs[date] || { ...defaultDayLog };
+          const log = s.getDayLog(date);
           return { dayLogs: { ...s.dayLogs, [date]: { ...log, steps } } };
         }),
 
       toggleWorkoutDone: (date) =>
         set((s) => {
-          const log = s.dayLogs[date] || { ...defaultDayLog };
+          const log = s.getDayLog(date);
           return {
             dayLogs: {
               ...s.dayLogs,
