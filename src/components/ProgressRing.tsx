@@ -1,0 +1,68 @@
+import React from 'react';
+
+interface ProgressRingProps {
+  progress: number; // 0 to 1
+  size?: number;
+  strokeWidth?: number;
+  color: string;
+  bgColor?: string;
+  label?: string;
+  sublabel?: string;
+  icon?: React.ReactNode;
+}
+
+export const ProgressRing: React.FC<ProgressRingProps> = ({
+  progress,
+  size = 72,
+  strokeWidth = 7,
+  color,
+  bgColor = 'rgba(0,0,0,0.06)',
+  label,
+  sublabel,
+  icon,
+}) => {
+  const clampedProgress = Math.min(Math.max(progress, 0), 1);
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - clampedProgress * circumference;
+
+  return (
+    <div className="flex flex-col items-center">
+      <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
+        <svg width={size} height={size} className="transform -rotate-90">
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            stroke={bgColor}
+            strokeWidth={strokeWidth}
+            fill="transparent"
+          />
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            stroke={color}
+            strokeWidth={strokeWidth}
+            strokeDasharray={circumference}
+            strokeDashoffset={strokeDashoffset}
+            strokeLinecap="round"
+            fill="transparent"
+            className="transition-all duration-700 ease-out"
+          />
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+          {icon ? (
+            <div className="text-xs">{icon}</div>
+          ) : (
+            <span className="text-xs font-bold leading-none">{Math.round(clampedProgress * 100)}%</span>
+          )}
+        </div>
+      </div>
+      {label && <span className="mt-1 text-[11px] font-semibold">{label}</span>}
+      {sublabel && <span className="text-[10px] text-gray-500">{sublabel}</span>}
+    </div>
+  );
+};
+
+export default ProgressRing;

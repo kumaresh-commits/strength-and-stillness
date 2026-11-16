@@ -1,0 +1,168 @@
+import React, { useState, useMemo } from 'react';
+import { useStore } from '../store/useStore';
+import { themes } from '../lib/themes';
+import { getDailyQuote, dailyQuotes } from '../data/dailyQuotes';
+import ProgressRing from './ProgressRing';
+import { Sparkles, Utensils, Dumbbell, Droplets, Leaf, Shuffle } from 'lucide-react';
+import { sound } from '../lib/sound';
+
+export const HeroCard: React.FC = () => {
+  const { theme, isVegetarian, toggleVegetarian, currentDate, getDayLog, dailyGoals } = useStore();
+  const t = themes[theme];
+
+  // Daily dynamic quote based on calendar date
+  const defaultDailyQuote = useMemo(() => getDailyQuote(new Date()), []);
+  const [currentQuote, setCurrentQuote] = useState(defaultDailyQuote);
+  const [isCustomShuffled, setIsCustomShuffled] = useState(false);
+
+  const dayLog = getDayLog(currentDate);
+
+  // Compute progress stats
+  const completedMealsCount = dayLog.completedMeals.length;
+  const targetMeals = dailyGoals.meals || 5;
+  const mealsProgress = completedMealsCount / targetMeals;
+
+  // Workouts
+  const totalCompletedSets = Object.values(dayLog.completedSets).reduce(
+    (acc, sets) => acc + sets.length,
+    0
+  );
+  const workoutTargetSets = 14; // Average daily sets
+  const workoutProgress = dayLog.workoutDone ? 1 : Math.min(totalCompletedSets / workoutTargetSets, 1);
+
+  // Water
+  const waterProgress = (dayLog.waterGlasses || 0) / (dailyGoals.waterGlasses || 8);
+
+  const dateObj = new Date();
+  const dayName = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
+  const formattedDate = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+  const getGreeting = () => {
+    const hour = dateObj.getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    return 'Good evening';
+  };
+
+  const nextQuote = () => {
+    sound.triggerHaptic('light');
+    setIsCustomShuffled(true);
+    const randomIndex = Math.floor(Math.random() * dailyQuotes.length);
+    setCurrentQuote(dailyQuotes[randomIndex]);
+  };
+
+  return (
+    <div
+      className="rounded-3xl p-5 mb-5 shadow-sm transition-all duration-300 border relative overflow-hidden"
+      style={{
+        backgroundColor: t.card,
+        borderColor: theme === 'cyber' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)',
+      }}
+    >
+      {/* Background subtle glow */}
+      <div
+        className="absolute -top-16 -right-16 w-36 h-36 rounded-full blur-3xl opacity-20 pointer-events-none"
+        style={{ backgroundColor: t.primary }}
+      />
+
+      {/* Header with Greeting & Veg Toggle */}
+      <div className="flex items-center justify-between mb-3">
+        <div>
+          <div className="flex items-center gap-1.5 text-xs font-semibold tracking-wider uppercase opacity-70">
+            <span>{dayName}, {formattedDate}</span>
+          </div>
+          <h1 className="text-xl font-extrabold tracking-tight">
+            {getGreeting()} 🌅
+          </h1>
+        </div>
+
+        {/* Veg / Non-Veg Toggle Pill with Dark Green Styling */}
+        <button
+          onClick={() => {
+            sound.triggerHaptic('medium');
+            toggleVegetarian();
+          }}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black transition-all shadow-xs active:scale-95 cursor-pointer text-white"
+          style={{
+            backgroundColor: '#1B4332',
+          }}
+          title="Toggle Vegetarian / Non-Vegetarian diet options"
+        >
+          {isVegetarian ? (
+            <>
+              <Leaf size={13} className="text-[#52B788]" />
+              <span>Veg (Paneer)</span>
+            </>
+          ) : (
+            <>
+              <Utensils size={13} className="text-[#D4AF37]" />
+              <span>Non-Veg (Chicken/Eggs)</span>
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* Daily Rotating Wisdom Banner */}
+      <div
+        onClick={nextQuote}
+        className="rounded-2xl p-3 mb-4 cursor-pointer transition-all active:scale-[0.99] border relative"
+        style={{
+          backgroundColor: theme === 'cyber' ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
+          borderColor: theme === 'cyber' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
+        }}
+      >
+        <div className="flex items-center justify-between mb-1">
+          <div className="flex items-center gap-1.5">
+            <Sparkles size={13} className="text-amber-500 animate-pulse" />
+            <span className="text-[10px] font-black uppercase tracking-wider text-amber-600 dark:text-amber-400">
+              {isCustomShuffled ? 'Refreshed Quote' : "Today's Daily Wisdom"} • {currentQuote.theme}
+            </span>
+          </div>
+          <div className="flex items-center gap-1 text-[10px] opacity-50 font-semibold">
+            <Shuffle size={10} />
+            <span>Tap to cycle</span>
+          </div>
+        </div>
+
+        <p className="text-xs italic leading-relaxed opacity-95 font-medium">
+          "{currentQuote.text}"
+        </p>
+      </div>
+
+      {/* Daily Progress Rings Bar */}
+      <div className="grid grid-cols-3 gap-2 pt-1 border-t border-gray-100 dark:border-gray-800">
+        <ProgressRing
+          progress={mealsProgress}
+          color={t.ring1}
+          size={64}
+          strokeWidth={6}
+          label="Diet"
+          sublabel={`${completedMealsCount}/${targetMeals}`}
+          icon={<Utensils size={14} style={{ color: t.ring1 }} />}
+        />
+
+        <ProgressRing
+          progress={workoutProgress}
+          color={t.ring2}
+          size={64}
+          strokeWidth={6}
+          label="Gym"
+          sublabel={dayLog.workoutDone ? 'Done' : `${totalCompletedSets} sets`}
+          icon={<Dumbbell size={14} style={{ color: t.ring2 }} />}
+        />
+
+        <ProgressRing
+          progress={waterProgress}
+          color={t.ring3}
+          size={64}
+          strokeWidth={6}
+          label="Water"
+          sublabel={`${dayLog.waterGlasses || 0}/${dailyGoals.waterGlasses || 8}`}
+          icon={<Droplets size={14} style={{ color: t.ring3 }} />}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default HeroCard;

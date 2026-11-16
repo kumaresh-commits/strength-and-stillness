@@ -1,0 +1,326 @@
+import React, { useState, useEffect } from 'react';
+import { useStore } from '../store/useStore';
+import { themes } from '../lib/themes';
+import { workoutDays, trainingNotes } from '../data/workoutPlan';
+import { sound } from '../lib/sound';
+import RestTimer from './RestTimer';
+import { toast } from 'sonner';
+import {
+  CheckCircle2,
+  Timer,
+  AlertTriangle,
+  Trophy,
+  Calendar,
+} from 'lucide-react';
+
+export const WorkoutTab: React.FC = () => {
+  const { theme, currentDate, getDayLog, toggleSet, toggleWorkoutDone, syncTodayDate } = useStore();
+  const t = themes[theme];
+
+  // Always ensure today's real date is synchronized on load
+  useEffect(() => {
+    syncTodayDate();
+  }, [syncTodayDate]);
+
+  const dayLog = getDayLog(currentDate);
+
+  // Format today's human-readable date
+  const dateObj = new Date();
+  const todayFormatted = dateObj.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'short',
+    day: 'numeric',
+  });
+
+  // Default workout matches today's day of the week (0=Sun, 1=Mon, ..., 6=Sat)
+  const currentDayOfWeek = dateObj.getDay();
+  const [selectedDayId, setSelectedDayId] = useState<string>(() => {
+    const match = workoutDays.find((d) => d.dayIndex === currentDayOfWeek);
+    return match ? match.id : 'monday';
+  });
+
+  // Rest Timer State
+  const [timerOpen, setTimerOpen] = useState(false);
+  const [timerSeconds, setTimerSeconds] = useState(60);
+
+  // Active workout day object
+  const currentWorkout = workoutDays.find((d) => d.id === selectedDayId) || workoutDays[0];
+  const completedSetsForDay = dayLog.completedSets[selectedDayId] || [];
+
+  // Calculate total sets for this workout
+  const totalTargetSets = currentWorkout.exercises.reduce((acc, ex) => acc + ex.sets, 0);
+  const totalCompletedSets = completedSetsForDay.length;
+
+  const handleSetToggle = (exerciseIndex: number, setIndex: number, exerciseName: string) => {
+    sound.triggerHaptic('medium');
+    const isAlreadyDone = completedSetsForDay.some(
+      (cs) => cs.exerciseIndex === exerciseIndex && cs.setIndex === setIndex
+    );
+
+    toggleSet(currentDate, selectedDayId, exerciseIndex, setIndex);
+
+    if (!isAlreadyDone) {
+      sound.playChime();
+      toast.success(`${exerciseName} — Set ${setIndex + 1} logged!`, {
+        description: 'Take a quick rest and get ready for the next set.',
+      });
+      // Offer / start rest timer
+      setTimerSeconds(60);
+      setTimerOpen(true);
+    }
+  };
+
+  const handleToggleFinishWorkout = () => {
+    sound.triggerHaptic('heavy');
+    const nextState = !dayLog.workoutDone;
+    toggleWorkoutDone(currentDate);
+
+    if (nextState) {
+      sound.playSuccess();
+      toast.success('Workout Completed Today! 🏆🔥', {
+        description: 'Great discipline! Tomorrow, a fresh workout form will open automatically.',
+      });
+    } else {
+      toast.info('Workout marked in-progress');
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Header with Dark Green Labels & Dynamic Today Date */}
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="flex items-center gap-1.5 mb-1">
+            <span
+              className="text-[11px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider text-white shadow-xs"
+              style={{ backgroundColor: '#1B4332' }}
+            >
+              5-Day Plan
+            </span>
+            <div className="flex items-center gap-1 text-[11px] font-bold text-[#1B4332] dark:text-[#74C69D]">
+              <Calendar size={12} />
+              <span>{todayFormatted}</span>
+            </div>
+          </div>
+          <h2 className="text-lg font-black tracking-tight">Gym & Progressive Overload</h2>
+          <p className="text-xs opacity-75 mt-0.5 font-medium">
+            Daily log automatically refreshes for each new day.
+          </p>
+        </div>
+
+        {/* Manual Timer Toggle Button with Dark Green Styling */}
+        <button
+          onClick={() => {
+            sound.triggerHaptic('light');
+            setTimerSeconds(60);
+            setTimerOpen(!timerOpen);
+          }}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer text-white"
+          style={{
+            backgroundColor: '#1B4332',
+          }}
+        >
+          <Timer size={14} className="text-[#D4AF37]" />
+          <span>Rest Timer</span>
+        </button>
+      </div>
+
+      {/* Horizontal Day Switcher with Dark Green Active Chip */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+        {workoutDays.map((day) => {
+          const isSelected = day.id === selectedDayId;
+          const isToday = day.dayIndex === currentDayOfWeek;
+
+          return (
+            <button
+              key={day.id}
+              onClick={() => {
+                sound.triggerHaptic('light');
+                setSelectedDayId(day.id);
+              }}
+              className="flex-shrink-0 px-3 py-2 rounded-2xl flex flex-col items-center min-w-[58px] transition-all cursor-pointer border shadow-xs relative"
+              style={{
+                backgroundColor: isSelected ? '#1B4332' : t.card,
+                color: isSelected ? '#FFFFFF' : t.text,
+                borderColor: isSelected ? '#1B4332' : t.border,
+              }}
+            >
+              {isToday && (
+                <span className="w-2 h-2 rounded-full bg-[#D4AF37] absolute top-1.5 right-1.5" title="Today" />
+              )}
+              <span className="text-sm">{day.emoji}</span>
+              <span className="text-[11px] font-black mt-0.5">{day.day.slice(0, 3)}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Selected Day Workout Focus Card */}
+      <div
+        className="rounded-3xl p-4 border relative overflow-hidden shadow-xs"
+        style={{
+          backgroundColor: t.card,
+          borderColor: t.border,
+        }}
+      >
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider text-white bg-[#1B4332] mb-1">
+              <span>{currentWorkout.day} Routine</span>
+            </div>
+            <h3 className="text-base font-black tracking-tight flex items-center gap-2">
+              <span>{currentWorkout.muscleGroup}</span>
+              {currentWorkout.isRestDay && (
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                  Active Rest
+                </span>
+              )}
+            </h3>
+          </div>
+
+          {!currentWorkout.isRestDay && (
+            <div className="text-right">
+              <span className="text-xs font-black text-[#1B4332] dark:text-[#74C69D]">
+                {totalCompletedSets}/{totalTargetSets} sets
+              </span>
+              <div className="text-[10px] opacity-60 font-medium">Logged</div>
+            </div>
+          )}
+        </div>
+
+        {/* If it's a rest day */}
+        {currentWorkout.isRestDay ? (
+          <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 text-emerald-900 dark:text-emerald-200 text-xs space-y-2 border border-emerald-200/50">
+            <p className="font-bold flex items-center gap-1.5 text-xs text-[#1B4332] dark:text-emerald-300">
+              <span>🧘</span> Scheduled Active Rest & Stillness
+            </p>
+            <p className="opacity-80 leading-relaxed text-[11px] font-medium">
+              Muscle growth and central nervous system repair happen while you rest. Take a 30-minute light walk, perform gentle stretches in the Recovery tab, and prioritize food and 8+ hours of sleep.
+            </p>
+          </div>
+        ) : (
+          /* Exercise List */
+          <div className="space-y-3 mt-3">
+            {currentWorkout.exercises.map((exercise, exIdx) => {
+              const setsCompleted = completedSetsForDay.filter(
+                (cs) => cs.exerciseIndex === exIdx
+              ).length;
+              const isExDone = setsCompleted >= exercise.sets;
+
+              return (
+                <div
+                  key={exIdx}
+                  className="rounded-2xl p-3 border transition-all"
+                  style={{
+                    backgroundColor: t.bg,
+                    borderColor: isExDone ? '#2D6A4F' : t.border,
+                  }}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full flex items-center justify-center font-black text-[10px] bg-[#1B4332] text-white">
+                        {exIdx + 1}
+                      </span>
+                      <h4 className="text-xs font-black">{exercise.name}</h4>
+                    </div>
+                    <div className="text-[11px] font-bold text-[#1B4332] dark:text-[#74C69D]">
+                      {exercise.sets} sets × {exercise.reps} reps
+                    </div>
+                  </div>
+
+                  {/* Set Tracker Pills */}
+                  <div className="flex items-center gap-2 mt-2">
+                    {Array.from({ length: exercise.sets }).map((_, setIdx) => {
+                      const isSetDone = completedSetsForDay.some(
+                        (cs) => cs.exerciseIndex === exIdx && cs.setIndex === setIdx
+                      );
+
+                      return (
+                        <button
+                          key={setIdx}
+                          onClick={() => handleSetToggle(exIdx, setIdx, exercise.name)}
+                          className="flex-1 py-1.5 px-2 rounded-xl text-xs font-black flex items-center justify-center gap-1 border transition-all active:scale-95 cursor-pointer shadow-2xs"
+                          style={{
+                            backgroundColor: isSetDone ? '#1B4332' : t.card,
+                            color: isSetDone ? '#FFFFFF' : t.text,
+                            borderColor: isSetDone ? '#1B4332' : t.border,
+                          }}
+                        >
+                          {isSetDone ? (
+                            <CheckCircle2 size={13} className="text-[#D4AF37]" />
+                          ) : (
+                            <span className="opacity-60 text-[10px]">Set</span>
+                          )}
+                          <span>{setIdx + 1}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Daily Workout Complete Button */}
+            <div className="pt-2">
+              <button
+                onClick={handleToggleFinishWorkout}
+                className="w-full py-3.5 rounded-2xl font-black text-xs text-white shadow-md flex items-center justify-center gap-2 active:scale-98 cursor-pointer transition-all"
+                style={{
+                  backgroundColor: dayLog.workoutDone ? '#2D6A4F' : '#1B4332',
+                }}
+              >
+                {dayLog.workoutDone ? (
+                  <>
+                    <CheckCircle2 size={18} className="text-[#D4AF37]" />
+                    <span>Workout Completed Today! ✓ (Tap to Undo)</span>
+                  </>
+                ) : (
+                  <>
+                    <Trophy size={18} />
+                    <span>Mark Workout Completed Today</span>
+                  </>
+                )}
+              </button>
+              <p className="text-[10px] text-center opacity-65 font-medium mt-1.5">
+                Tomorrow's workout will automatically open with a fresh clean form!
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Training Notes Card from PDF */}
+      <div
+        className="rounded-2xl p-4 border shadow-xs"
+        style={{
+          backgroundColor: t.card,
+          borderColor: t.border,
+        }}
+      >
+        <div className="flex items-center gap-2 mb-2">
+          <AlertTriangle size={16} className="text-[#B8860B]" />
+          <h3 className="text-xs font-black uppercase tracking-wider text-[#1B4332] dark:text-[#74C69D]">
+            Coach's Training Notes
+          </h3>
+        </div>
+        <ul className="space-y-2 mt-2">
+          {trainingNotes.map((note, idx) => (
+            <li key={idx} className="text-xs flex items-start gap-2 leading-relaxed font-medium">
+              <span className="text-[#1B4332] font-black mt-0.5">•</span>
+              <span>{note}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Rest Timer Modal */}
+      <RestTimer
+        isOpen={timerOpen}
+        initialSeconds={timerSeconds}
+        onClose={() => setTimerOpen(false)}
+      />
+    </div>
+  );
+};
+
+export default WorkoutTab;

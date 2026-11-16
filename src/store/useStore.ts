@@ -1,0 +1,240 @@
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
+export type ThemeMode = 'dawn' | 'cyber' | 'ayurvedic';
+
+export interface CompletedSet {
+  exerciseIndex: number;
+  setIndex: number;
+  weight?: number;
+}
+
+export interface DayLog {
+  completedMeals: string[];
+  completedSets: Record<string, CompletedSet[]>;
+  waterGlasses: number;
+  sleepHours: number;
+  steps: number;
+  workoutDone: boolean;
+}
+
+export interface Reminder {
+  id: string;
+  label: string;
+  time: string; // HH:mm
+  enabled: boolean;
+  daysOfWeek: number[]; // 0=Sun..6=Sat
+  sound: string;
+  message: string;
+}
+
+export interface DailyGoals {
+  calories: number;
+  protein: number;
+  meals: number;
+  waterGlasses: number;
+  sleepHours: number;
+  steps: number;
+}
+
+export interface NotificationSettings {
+  pushEnabled: boolean;
+  toastsEnabled: boolean;
+  motivationalQuotes: boolean;
+  motivationalQuoteTime: string;
+  streakWarnings: boolean;
+  goalCelebration: boolean;
+  quietHoursEnabled: boolean;
+  quietHoursStart: string;
+  quietHoursEnd: string;
+  weeklyDigest: boolean;
+  weeklyDigestDay: number;
+  weeklyDigestTime: string;
+  masterMute: boolean;
+  soundVolume: number;
+  vibrationEnabled: boolean;
+}
+
+interface AppState {
+  theme: ThemeMode;
+  isVegetarian: boolean;
+  activeTab: number;
+  currentDate: string;
+  dayLogs: Record<string, DayLog>;
+  reminders: Reminder[];
+  dailyGoals: DailyGoals;
+  notificationSettings: NotificationSettings;
+  streakData: { currentDiet: number; longestDiet: number; currentGym: number; longestGym: number };
+
+  setTheme: (t: ThemeMode) => void;
+  toggleVegetarian: () => void;
+  setActiveTab: (tab: number) => void;
+  setCurrentDate: (date: string) => void;
+  syncTodayDate: () => void;
+  toggleMeal: (date: string, mealId: string) => void;
+  toggleSet: (date: string, dayId: string, exerciseIndex: number, setIndex: number, weight?: number) => void;
+  setWaterGlasses: (date: string, glasses: number) => void;
+  setSleepHours: (date: string, hours: number) => void;
+  setSteps: (date: string, steps: number) => void;
+  toggleWorkoutDone: (date: string) => void;
+  updateReminder: (id: string, updates: Partial<Reminder>) => void;
+  addReminder: (reminder: Reminder) => void;
+  removeReminder: (id: string) => void;
+  setDailyGoals: (goals: Partial<DailyGoals>) => void;
+  setNotificationSettings: (settings: Partial<NotificationSettings>) => void;
+  getDayLog: (date: string) => DayLog;
+}
+
+export const getTodayDateStr = () => {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const defaultDayLog: DayLog = {
+  completedMeals: [],
+  completedSets: {},
+  waterGlasses: 0,
+  sleepHours: 0,
+  steps: 0,
+  workoutDone: false,
+};
+
+const defaultReminders: Reminder[] = [
+  { id: 'breakfast', label: 'Breakfast', time: '07:15', enabled: true, daysOfWeek: [0,1,2,3,4,5,6], sound: 'chime', message: 'Time to fuel up! Oats, bananas & eggs/paneer 🍳' },
+  { id: 'lunch', label: 'Lunch', time: '12:45', enabled: true, daysOfWeek: [0,1,2,3,4,5,6], sound: 'chime', message: 'Lunch hour! Rice, chicken/paneer, veggies & curd 🍛' },
+  { id: 'snack', label: 'Evening Snack', time: '16:15', enabled: true, daysOfWeek: [0,1,2,3,4,5,6], sound: 'chime', message: 'Banana, milk, peanut butter & almonds 🍌' },
+  { id: 'dinner', label: 'Dinner', time: '19:45', enabled: true, daysOfWeek: [0,1,2,3,4,5,6], sound: 'chime', message: 'Dinner time — 3 chapatis & protein! 🥘' },
+  { id: 'before-sleep', label: 'Before Sleep', time: '21:15', enabled: true, daysOfWeek: [0,1,2,3,4,5,6], sound: 'chime', message: 'Warm milk, dates & cashews for night recovery 🌙' },
+  { id: 'workout', label: 'Gym Workout', time: '06:00', enabled: true, daysOfWeek: [1,2,3,4,5], sound: 'energy', message: 'Time to train! Progressive overload today 🏋️' },
+  { id: 'hydration', label: 'Hydration Check', time: '09:00', enabled: true, daysOfWeek: [0,1,2,3,4,5,6], sound: 'chime', message: '💧 Drink a fresh glass of water' },
+  { id: 'sleep-wind-down', label: 'Sleep Wind-Down', time: '22:00', enabled: true, daysOfWeek: [0,1,2,3,4,5,6], sound: 'bell', message: 'Wind down. 8 hours of deep muscle repair starts now 😴' },
+];
+
+const defaultGoals: DailyGoals = {
+  calories: 2700,
+  protein: 130,
+  meals: 5,
+  waterGlasses: 8,
+  sleepHours: 8,
+  steps: 6000,
+};
+
+const defaultNotifications: NotificationSettings = {
+  pushEnabled: true,
+  toastsEnabled: true,
+  motivationalQuotes: true,
+  motivationalQuoteTime: '07:00',
+  streakWarnings: true,
+  goalCelebration: true,
+  quietHoursEnabled: true,
+  quietHoursStart: '22:30',
+  quietHoursEnd: '06:30',
+  weeklyDigest: true,
+  weeklyDigestDay: 0,
+  weeklyDigestTime: '19:00',
+  masterMute: false,
+  soundVolume: 70,
+  vibrationEnabled: true,
+};
+
+export const useStore = create<AppState>()(
+  persist(
+    (set, get) => ({
+      theme: 'dawn',
+      isVegetarian: false,
+      activeTab: 0,
+      currentDate: getTodayDateStr(),
+      dayLogs: {},
+      reminders: defaultReminders,
+      dailyGoals: defaultGoals,
+      notificationSettings: defaultNotifications,
+      streakData: { currentDiet: 0, longestDiet: 0, currentGym: 0, longestGym: 0 },
+
+      setTheme: (t) => set({ theme: t }),
+      toggleVegetarian: () => set((s) => ({ isVegetarian: !s.isVegetarian })),
+      setActiveTab: (tab) => set({ activeTab: tab }),
+      setCurrentDate: (date) => set({ currentDate: date }),
+      syncTodayDate: () => set({ currentDate: getTodayDateStr() }),
+
+      getDayLog: (date) => get().dayLogs[date] || { ...defaultDayLog },
+
+      toggleMeal: (date, mealId) =>
+        set((s) => {
+          const log = s.dayLogs[date] || { ...defaultDayLog };
+          const meals = log.completedMeals.includes(mealId)
+            ? log.completedMeals.filter((m) => m !== mealId)
+            : [...log.completedMeals, mealId];
+          return { dayLogs: { ...s.dayLogs, [date]: { ...log, completedMeals: meals } } };
+        }),
+
+      toggleSet: (date, dayId, exerciseIndex, setIndex, weight) =>
+        set((s) => {
+          const log = s.dayLogs[date] || { ...defaultDayLog };
+          const daySets = log.completedSets[dayId] || [];
+          const exists = daySets.find(
+            (cs) => cs.exerciseIndex === exerciseIndex && cs.setIndex === setIndex
+          );
+          const newSets = exists
+            ? daySets.filter(
+                (cs) => !(cs.exerciseIndex === exerciseIndex && cs.setIndex === setIndex)
+              )
+            : [...daySets, { exerciseIndex, setIndex, weight }];
+          return {
+            dayLogs: {
+              ...s.dayLogs,
+              [date]: { ...log, completedSets: { ...log.completedSets, [dayId]: newSets } },
+            },
+          };
+        }),
+
+      setWaterGlasses: (date, glasses) =>
+        set((s) => {
+          const log = s.dayLogs[date] || { ...defaultDayLog };
+          return { dayLogs: { ...s.dayLogs, [date]: { ...log, waterGlasses: glasses } } };
+        }),
+
+      setSleepHours: (date, hours) =>
+        set((s) => {
+          const log = s.dayLogs[date] || { ...defaultDayLog };
+          return { dayLogs: { ...s.dayLogs, [date]: { ...log, sleepHours: hours } } };
+        }),
+
+      setSteps: (date, steps) =>
+        set((s) => {
+          const log = s.dayLogs[date] || { ...defaultDayLog };
+          return { dayLogs: { ...s.dayLogs, [date]: { ...log, steps } } };
+        }),
+
+      toggleWorkoutDone: (date) =>
+        set((s) => {
+          const log = s.dayLogs[date] || { ...defaultDayLog };
+          return {
+            dayLogs: {
+              ...s.dayLogs,
+              [date]: { ...log, workoutDone: !log.workoutDone },
+            },
+          };
+        }),
+
+      updateReminder: (id, updates) =>
+        set((s) => ({
+          reminders: s.reminders.map((r) => (r.id === id ? { ...r, ...updates } : r)),
+        })),
+
+      addReminder: (reminder) => set((s) => ({ reminders: [...s.reminders, reminder] })),
+
+      removeReminder: (id) =>
+        set((s) => ({ reminders: s.reminders.filter((r) => r.id !== id) })),
+
+      setDailyGoals: (goals) =>
+        set((s) => ({ dailyGoals: { ...s.dailyGoals, ...goals } })),
+
+      setNotificationSettings: (settings) =>
+        set((s) => ({ notificationSettings: { ...s.notificationSettings, ...settings } })),
+    }),
+    { name: 'strength-stillness-store' }
+  )
+);
