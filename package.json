@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
+    "test": "node tests/smoke-and-regression.mjs",
+    "test:smoke": "node tests/smoke-and-regression.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
