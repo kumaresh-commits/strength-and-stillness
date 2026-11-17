@@ -232,8 +232,8 @@ export const DietTab: React.FC = () => {
             {activePlan.dayName} Meals ({dayLog.completedMeals.length}/5 Logged)
           </span>
           {dayLog.completedMeals.length >= 5 ? (
-            <span className="inline-flex items-center gap-1 text-[11px] font-black text-[#1B4332] bg-emerald-100/90 px-2.5 py-0.5 rounded-full border border-emerald-300">
-              <CheckCircle2 size={12} className="text-[#1B4332]" /> All 5 Meals Completed ✓
+            <span className="inline-flex items-center gap-1 text-[11px] font-black text-pink-700 bg-pink-100/95 px-2.5 py-0.5 rounded-full border border-pink-300 shadow-2xs">
+              <CheckCircle2 size={12} className="text-pink-600" /> All 5 Meals Completed ✓
             </span>
           ) : (
             <button

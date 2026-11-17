@@ -88,8 +88,13 @@ export const WorkoutTab: React.FC = () => {
             >
               5-Day Plan
             </span>
-            <div className="flex items-center gap-1 text-[11px] font-bold text-[#1B4332]">
+            <div className={`flex items-center gap-1 text-[11px] font-bold ${isWorkoutCompleted ? 'text-pink-600' : 'text-[#1B4332]'}`}>
               <span>{selectedDateFormatted}</span>
+              {isWorkoutCompleted && (
+                <span className="text-[9px] font-black px-1.5 py-0.2 rounded-md bg-pink-100 text-pink-700 border border-pink-200">
+                  Completed ✓
+                </span>
+              )}
             </div>
           </div>
           <h2 className="text-lg font-black tracking-tight text-slate-900">Gym & Progressive Overload</h2>
@@ -216,11 +221,15 @@ export const WorkoutTab: React.FC = () => {
             <div className="pt-2">
               <button
                 onClick={handleToggleFinishWorkout}
-                className="w-full py-3.5 rounded-2xl font-black text-xs text-white shadow-md flex items-center justify-center gap-2 active:scale-98 cursor-pointer transition-all glass-btn-primary"
+                className={`w-full py-3.5 rounded-2xl font-black text-xs text-white shadow-md flex items-center justify-center gap-2 active:scale-98 cursor-pointer transition-all ${
+                  dayLog.workoutDone
+                    ? 'bg-gradient-to-r from-pink-500 to-rose-600 border border-pink-300 shadow-md'
+                    : 'glass-btn-primary'
+                }`}
               >
                 {dayLog.workoutDone ? (
                   <>
-                    <CheckCircle2 size={18} className="text-[#D4AF37]" />
+                    <CheckCircle2 size={18} className="text-white" />
                     <span>Workout Completed on {currentWorkout.day}! ✓ (Tap to Undo)</span>
                   </>
                 ) : (

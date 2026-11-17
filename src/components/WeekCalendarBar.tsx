@@ -33,19 +33,35 @@ export const WeekCalendarBar: React.FC<WeekCalendarBarProps> = ({
 
   const isViewingToday = currentDate === todayStr;
 
+  const selectedLog = getDayLog(currentDate);
+  const isSelectedDayCompleted =
+    selectedLog.workoutDone || (selectedLog.completedMeals && selectedLog.completedMeals.length >= 5);
+
   return (
     <div className={`space-y-2 ${className}`}>
       {/* Date Header & Quick Jump Controls */}
       {showStatusSummary && (
         <div className="flex items-center justify-between px-0.5">
           <div className="flex items-center gap-1.5">
-            <Calendar size={14} className="text-[#1B4332]" />
-            <span className="text-xs font-black tracking-tight text-slate-900">
+            <Calendar
+              size={14}
+              className={isSelectedDayCompleted ? 'text-pink-600' : 'text-[#1B4332]'}
+            />
+            <span
+              className={`text-xs font-black tracking-tight ${
+                isSelectedDayCompleted ? 'text-pink-700' : 'text-slate-900'
+              }`}
+            >
               {selectedDay.fullDateLabel}
             </span>
             {isViewingToday ? (
               <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-[#1B4332] text-white">
                 Today
+              </span>
+            ) : isSelectedDayCompleted ? (
+              <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-pink-100 text-pink-700 border border-pink-300 flex items-center gap-1 shadow-2xs">
+                <Check size={10} strokeWidth={3.5} className="text-pink-600" />
+                <span>Day Completed ✓</span>
               </span>
             ) : selectedDay.isPast ? (
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
@@ -82,8 +98,45 @@ export const WeekCalendarBar: React.FC<WeekCalendarBarProps> = ({
 
           // Completion checks for visual indicator
           const hasCompletedMeals = (log.completedMeals || []).length > 0;
-          const isWorkoutDone = log.workoutDone || Object.values(log.completedSets || {}).some(s => s.length > 0);
+          const isWorkoutDone =
+            log.workoutDone || Object.values(log.completedSets || {}).some((s) => s.length > 0);
+          const isCompleted = log.workoutDone || (log.completedMeals && log.completedMeals.length >= 5);
           const hasAnyActivity = hasCompletedMeals || isWorkoutDone;
+
+          // Determine styling: Pink for completed days (like day 16)
+          let pillClasses = 'flex-1 min-w-[54px] py-2 px-1 rounded-2xl flex flex-col items-center justify-center transition-all cursor-pointer relative active:scale-95 ';
+          let pillStyle: React.CSSProperties = {};
+          let dayShortClasses = 'text-[10px] font-black uppercase tracking-wider ';
+          let dateNumClasses = 'text-sm font-black mt-0.5 leading-none ';
+
+          if (isCompleted) {
+            if (isSelected) {
+              pillClasses += 'text-white shadow-md border border-pink-300';
+              pillStyle = {
+                background: 'linear-gradient(135deg, #EC4899 0%, #BE185D 100%)',
+                boxShadow: '0 4px 14px rgba(236, 72, 153, 0.45)',
+              };
+              dayShortClasses += 'text-pink-100';
+              dateNumClasses += 'text-white';
+            } else {
+              pillClasses += 'border border-pink-300/90 shadow-2xs bg-pink-50/95';
+              pillStyle = {
+                boxShadow: '0 2px 8px rgba(236, 72, 153, 0.2)',
+              };
+              dayShortClasses += 'text-pink-500';
+              dateNumClasses += 'text-pink-600';
+            }
+          } else {
+            if (isSelected) {
+              pillClasses += 'glass-chip-active';
+              dayShortClasses += 'text-emerald-100';
+              dateNumClasses += 'text-white';
+            } else {
+              pillClasses += 'glass-chip-inactive';
+              dayShortClasses += 'text-slate-500';
+              dateNumClasses += 'text-slate-800';
+            }
+          }
 
           return (
             <button
@@ -92,9 +145,8 @@ export const WeekCalendarBar: React.FC<WeekCalendarBarProps> = ({
                 sound.triggerHaptic('light');
                 setCurrentDate(day.dateStr);
               }}
-              className={`flex-1 min-w-[54px] py-2 px-1 rounded-2xl flex flex-col items-center justify-center transition-all cursor-pointer relative active:scale-95 ${
-                isSelected ? 'glass-chip-active' : 'glass-chip-inactive'
-              }`}
+              className={pillClasses}
+              style={pillStyle}
             >
               {/* Today Gold Dot Indicator */}
               {day.isToday && !isSelected && (
@@ -105,33 +157,30 @@ export const WeekCalendarBar: React.FC<WeekCalendarBarProps> = ({
               )}
 
               {/* Day Abbreviation: Mon, Tue, Wed, etc. */}
-              <span
-                className={`text-[10px] font-black uppercase tracking-wider ${
-                  isSelected ? 'text-emerald-100' : 'text-slate-500'
-                }`}
-              >
-                {day.dayShort}
-              </span>
+              <span className={dayShortClasses}>{day.dayShort}</span>
 
               {/* Day Date Number: 16, 17, 18, etc. */}
-              <span
-                className={`text-sm font-black mt-0.5 leading-none ${
-                  isSelected ? 'text-white' : 'text-slate-800'
-                }`}
-              >
-                {day.dateNum}
-              </span>
+              <span className={dateNumClasses}>{day.dateNum}</span>
 
               {/* History Completion Indicator Badge */}
               <div className="h-2.5 mt-1 flex items-center justify-center">
-                {hasAnyActivity ? (
+                {isCompleted ? (
+                  <span
+                    className={`inline-flex items-center justify-center w-3 h-3 rounded-full shadow-2xs ${
+                      isSelected ? 'bg-white text-pink-600' : 'bg-pink-500 text-white'
+                    }`}
+                    title="Day completed (marked in pink)"
+                  >
+                    <Check size={8} strokeWidth={3.5} />
+                  </span>
+                ) : hasAnyActivity ? (
                   <span
                     className={`inline-flex items-center justify-center w-3 h-3 rounded-full ${
                       isSelected
                         ? 'bg-[#D4AF37] text-[#1B4332]'
                         : 'bg-[#1B4332] text-white shadow-2xs'
                     }`}
-                    title="Activity logged on this day"
+                    title="Activity in progress"
                   >
                     <Check size={8} strokeWidth={3.5} />
                   </span>

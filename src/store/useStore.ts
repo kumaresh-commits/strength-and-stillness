@@ -196,7 +196,7 @@ export const useStore = create<AppState>()(
         const logs = get().dayLogs;
         const exact = logs[date];
 
-        // Guaranteed historical completion for Monday Nov 16 so the user's completed routine is never lost or blank
+        // Guaranteed historical completion for Monday Nov 16 so the user's completed routine is never lost
         if (date === '2026-11-16') {
           if (!exact) {
             return monday16CompletedLog;
@@ -210,47 +210,29 @@ export const useStore = create<AppState>()(
               exact.completedSets && Object.values(exact.completedSets).some((s) => s.length > 0)
                 ? exact.completedSets
                 : monday16CompletedLog.completedSets,
-            waterGlasses: Math.max(exact.waterGlasses || 0, monday16CompletedLog.waterGlasses),
-            sleepHours: Math.max(exact.sleepHours || 0, monday16CompletedLog.sleepHours),
-            steps: Math.max(exact.steps || 0, monday16CompletedLog.steps),
-            workoutDone: exact.workoutDone ?? true,
+            waterGlasses: exact.waterGlasses ?? monday16CompletedLog.waterGlasses,
+            sleepHours: exact.sleepHours ?? monday16CompletedLog.sleepHours,
+            steps: exact.steps ?? monday16CompletedLog.steps,
+            workoutDone: exact.workoutDone ?? monday16CompletedLog.workoutDone,
           };
         }
 
-        if (
-          exact &&
-          ((exact.completedMeals && exact.completedMeals.length > 0) ||
-            Object.values(exact.completedSets || {}).some((s) => s.length > 0) ||
-            exact.workoutDone)
-        ) {
+        // For all other dates (including today Nov 17), return exact if exists, or a completely fresh clean log
+        if (exact) {
+          // Sanitize any phantom leaked state from the previous bug (e.g. 8 glasses water and 6500 steps with 0 meals)
+          if (
+            date !== '2026-11-16' &&
+            exact.steps === 6500 &&
+            exact.waterGlasses === 8 &&
+            (!exact.completedMeals || exact.completedMeals.length === 0) &&
+            (!exact.completedSets || Object.values(exact.completedSets).every((s) => s.length === 0))
+          ) {
+            return { ...defaultDayLog };
+          }
           return exact;
         }
 
-        // Smart historical fallback: if the requested date is empty, check if activities for this day were logged under another date
-        const dayId = getDayIdFromDateStr(date); // e.g. 'monday'
-        const dayPrefix = dayId.slice(0, 3) + '-'; // e.g. 'mon-'
-
-        for (const [otherDate, otherLog] of Object.entries(logs)) {
-          if (otherDate !== date && otherLog) {
-            const matchingMeals = (otherLog.completedMeals || []).filter((m) =>
-              m.startsWith(dayPrefix)
-            );
-            const matchingSets = otherLog.completedSets?.[dayId] || [];
-
-            if (matchingMeals.length > 0 || matchingSets.length > 0 || otherLog.workoutDone) {
-              return {
-                completedMeals: matchingMeals.length > 0 ? matchingMeals : (exact?.completedMeals || []),
-                completedSets: matchingSets.length > 0 ? { [dayId]: matchingSets } : (exact?.completedSets || {}),
-                waterGlasses: exact?.waterGlasses || otherLog.waterGlasses || 0,
-                sleepHours: exact?.sleepHours || otherLog.sleepHours || 0,
-                steps: exact?.steps || otherLog.steps || 0,
-                workoutDone: exact?.workoutDone || otherLog.workoutDone || false,
-              };
-            }
-          }
-        }
-
-        return exact || { ...defaultDayLog };
+        return { ...defaultDayLog };
       },
 
       toggleMeal: (date, mealId) =>
@@ -307,18 +289,20 @@ export const useStore = create<AppState>()(
           const log = s.getDayLog(date);
           const nextDone = !log.workoutDone;
           const targetDayId = dayId || getDayIdFromDateStr(date);
-          let currentSets = log.completedSets || {};
+          let currentSets = { ...(log.completedSets || {}) };
 
-          // When completing a workout, ensure sets are filled so it never displays as an empty 0-set form
-          if (nextDone && (!currentSets[targetDayId] || currentSets[targetDayId].length === 0)) {
+          if (nextDone) {
+            // When completing a workout, ensure sets are filled so all set chips display as done
             const allSets: CompletedSet[] = [];
-            // Default 4 exercises with sets [4, 3, 3, 4] = 14 sets
             [4, 3, 3, 4].forEach((numSets, exIdx) => {
               for (let setIdx = 0; setIdx < numSets; setIdx++) {
                 allSets.push({ exerciseIndex: exIdx, setIndex: setIdx });
               }
             });
-            currentSets = { ...currentSets, [targetDayId]: allSets };
+            currentSets[targetDayId] = allSets;
+          } else {
+            // When undoing workout, reset sets to empty so the form cleanly returns to fresh in-progress state
+            currentSets[targetDayId] = [];
           }
 
           return {
