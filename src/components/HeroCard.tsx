@@ -216,7 +216,7 @@ export const HeroCard: React.FC = () => {
   };
 
   return (
-    <div className="glass-panel rounded-3xl p-5 mb-5 transition-all duration-300 relative overflow-hidden">
+    <div className="glass-panel rounded-3xl p-4 sm:p-5 mb-3.5 sm:mb-4 transition-all duration-300 relative overflow-hidden shadow-xs">
       {/* Background subtle glow */}
       <div
         className="absolute -top-16 -right-16 w-36 h-36 rounded-full blur-3xl opacity-20 pointer-events-none"
@@ -224,7 +224,7 @@ export const HeroCard: React.FC = () => {
       />
 
       {/* Header with Greeting & Veg Toggle */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between mb-3 gap-2">
         <div>
           <div className="flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase text-slate-600 mb-1">
             <span>{dayName}, {formattedDate}</span>
@@ -243,41 +243,41 @@ export const HeroCard: React.FC = () => {
             )}
           </div>
 
-          {/* Time-of-day greeting with ROUND SHAPED climate / sky icon */}
-          <div className="flex items-center gap-2.5">
+          {/* Time-of-day greeting with ROUND SHAPED climate / sky icon & refined responsive typography */}
+          <div className="flex items-center gap-2">
             <div
-              className={`w-9 h-9 rounded-full flex items-center justify-center border shadow-xs transition-transform active:scale-95 ${timePeriodInfo.bgClass}`}
+              className={`w-7.5 h-7.5 sm:w-8 sm:h-8 rounded-full flex items-center justify-center border shadow-xs transition-transform active:scale-95 ${timePeriodInfo.bgClass}`}
               style={{
-                boxShadow: `0 0 14px ${timePeriodInfo.glowColor}`,
+                boxShadow: `0 0 10px ${timePeriodInfo.glowColor}`,
               }}
               title={timePeriodInfo.label}
             >
-              <TimeIcon size={18} strokeWidth={2.4} />
+              <TimeIcon size={15} strokeWidth={2.3} />
             </div>
-            <h1 className="text-xl font-extrabold tracking-tight text-slate-900">
+            <h1 className="text-sm sm:text-base font-bold tracking-tight text-slate-800 leading-tight">
               {timePeriodInfo.label}
             </h1>
           </div>
         </div>
 
-        {/* Veg / Non-Veg Toggle Pill with Glossy Styling */}
+        {/* Veg / Non-Veg Toggle Pill with Glossy Styling (Compact: Non-Veg / Veg only) */}
         <button
           onClick={() => {
             sound.triggerHaptic('medium');
             toggleVegetarian();
           }}
-          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-black transition-all glass-btn-primary text-white cursor-pointer active:scale-95 shadow-sm self-start mt-1"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black transition-all glass-btn-primary text-white cursor-pointer active:scale-95 shadow-sm self-start mt-0.5 shrink-0"
           title="Toggle Vegetarian / Non-Vegetarian diet options"
         >
           {isVegetarian ? (
             <>
               <Leaf size={13} className="text-[#74C69D]" />
-              <span>Veg (Paneer)</span>
+              <span>Veg</span>
             </>
           ) : (
             <>
               <Utensils size={13} className="text-[#D4AF37]" />
-              <span>Non-Veg (Chicken/Eggs)</span>
+              <span>Non-Veg</span>
             </>
           )}
         </button>

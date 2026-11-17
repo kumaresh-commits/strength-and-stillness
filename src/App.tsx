@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Toaster } from 'sonner';
 import { useStore } from './store/useStore';
 import { themes } from './lib/themes';
@@ -19,6 +20,16 @@ function App() {
   // Active background reminder scheduler for meals, workout, and hydration
   useReminderScheduler();
 
+  // Sync theme attribute to HTML document root for dynamic high-contrast styles
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    if (theme === 'cyber') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
+
   const tabs = [
     <DietTab key="diet" />,
     <WorkoutTab key="workout" />,
@@ -29,7 +40,7 @@ function App() {
 
   return (
     <div
-      className="min-h-screen pb-24 transition-colors duration-300 relative overflow-x-hidden"
+      className="min-h-screen transition-colors duration-300 relative overflow-x-hidden"
       style={{ backgroundColor: t.bg, color: t.text }}
     >
       {/* Dynamic Specular Glass Light Reflections */}
@@ -53,10 +64,11 @@ function App() {
       />
 
       <Toaster richColors position="top-center" />
-      <div className="max-w-lg mx-auto px-4 pt-safe relative z-10">
+      {/* Mobile-first main container with calibrated margins and safe padding */}
+      <main className="w-full max-w-md mx-auto px-3 sm:px-4 pt-2.5 sm:pt-4 pb-28 sm:pb-32 relative z-10 box-border">
         <HeroCard />
         {tabs[activeTab]}
-      </div>
+      </main>
       <BottomNav />
     </div>
   );

@@ -23,7 +23,7 @@ export const BottomNav: React.FC = () => {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-30 glass-nav-dock transition-colors duration-300">
-      <div className="max-w-md mx-auto flex items-center justify-around px-2 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+      <div className="max-w-md mx-auto flex items-center justify-around px-2 py-1.5 pb-[max(0.65rem,env(safe-area-inset-bottom))]">
         {navItems.map((item, idx) => {
           const isActive = activeTab === idx;
           const Icon = item.icon;
@@ -34,7 +34,13 @@ export const BottomNav: React.FC = () => {
               onClick={() => handleTabClick(idx)}
               className="flex-1 py-1.5 px-1 rounded-2xl flex flex-col items-center gap-1 transition-all active:scale-90 cursor-pointer relative"
               style={{
-                color: isActive ? t.primary : theme === 'cyber' ? '#94A3B8' : '#64748B',
+                color: isActive
+                  ? theme === 'cyber'
+                    ? '#52B788'
+                    : t.primary
+                  : theme === 'cyber'
+                  ? '#94A3B8'
+                  : '#64748B',
               }}
             >
               <div
@@ -46,7 +52,13 @@ export const BottomNav: React.FC = () => {
               </div>
               <span
                 className={`text-[10px] tracking-tight ${
-                  isActive ? 'font-black text-[#1B4332]' : 'font-semibold text-slate-500'
+                  isActive
+                    ? theme === 'cyber'
+                      ? 'font-black text-[#52B788]'
+                      : 'font-black text-[#1B4332]'
+                    : theme === 'cyber'
+                    ? 'font-medium text-slate-400'
+                    : 'font-semibold text-slate-500'
                 }`}
               >
                 {item.label}
