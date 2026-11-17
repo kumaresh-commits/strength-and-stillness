@@ -227,6 +227,28 @@ export const DietTab: React.FC = () => {
 
       {/* 5 Meal Schedule Cards for Selected Day */}
       <div className="space-y-3">
+        <div className="flex items-center justify-between px-1">
+          <span className="text-xs font-black text-slate-800">
+            {activePlan.dayName} Meals ({dayLog.completedMeals.length}/5 Logged)
+          </span>
+          {dayLog.completedMeals.length >= 5 ? (
+            <span className="inline-flex items-center gap-1 text-[11px] font-black text-[#1B4332] bg-emerald-100/90 px-2.5 py-0.5 rounded-full border border-emerald-300">
+              <CheckCircle2 size={12} className="text-[#1B4332]" /> All 5 Meals Completed ✓
+            </span>
+          ) : (
+            <button
+              onClick={() => {
+                sound.playSuccess();
+                sound.triggerHaptic('medium');
+                useStore.getState().markDayAllCompleted(currentDate, activePlan.dayId);
+                toast.success(`Marked all 5 meals logged for ${activePlan.dayName}! 🍛✨`);
+              }}
+              className="text-[10px] font-bold text-[#1B4332] hover:underline cursor-pointer active:scale-95 transition-all"
+            >
+              + Mark All 5 Done
+            </button>
+          )}
+        </div>
         {activePlan.meals.map((meal) => {
           const isDone = dayLog.completedMeals.includes(meal.id);
           const mealCalories = isVegetarian && meal.vegCalories ? meal.vegCalories : meal.calories;

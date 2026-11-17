@@ -1,21 +1,46 @@
 import React, { useState, useMemo } from 'react';
 import { useStore } from '../store/useStore';
 import { themes } from '../lib/themes';
-import { getDailyQuote, dailyQuotes } from '../data/dailyQuotes';
+import { getDailyAffirmation, dailyAffirmations, type PrayerAffirmation } from '../data/dailyAffirmations';
 import { parseDateStr, getTodayDateStr } from '../lib/dateUtils';
 import ProgressRing from './ProgressRing';
-import { Sparkles, Utensils, Dumbbell, Droplets, Leaf, Shuffle, RotateCcw } from 'lucide-react';
+import { Sparkles, Utensils, Dumbbell, Droplets, Leaf, Shuffle, RotateCcw, Bell, Copy, Check } from 'lucide-react';
 import { sound } from '../lib/sound';
+import { toast } from 'sonner';
 
 export const HeroCard: React.FC = () => {
-  const { theme, isVegetarian, toggleVegetarian, currentDate, syncTodayDate, getDayLog, dailyGoals } = useStore();
+  const {
+    theme,
+    isVegetarian,
+    toggleVegetarian,
+    currentDate,
+    syncTodayDate,
+    getDayLog,
+    dailyGoals,
+    dailyAffirmationsPrayed,
+    toggleAffirmationPrayed,
+  } = useStore();
   const t = themes[theme];
 
-  // Daily dynamic quote based on calendar date
-  const defaultDailyQuote = useMemo(() => getDailyQuote(new Date()), []);
-  const [currentQuote, setCurrentQuote] = useState(defaultDailyQuote);
-  const [isCustomShuffled, setIsCustomShuffled] = useState(false);
+  // Dynamic Date parsing based on selected currentDate
+  const selectedDateObj = useMemo(() => parseDateStr(currentDate), [currentDate]);
+  const dayName = selectedDateObj.toLocaleDateString('en-US', { weekday: 'long' });
+  const formattedDate = selectedDateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const todayStr = getTodayDateStr();
+  const isViewingToday = currentDate === todayStr;
 
+  // Daily dynamic prayer affirmation tied deterministically to the selected date
+  const defaultAffirmation = useMemo(() => getDailyAffirmation(selectedDateObj), [selectedDateObj]);
+  const [customAffirmation, setCustomAffirmation] = useState<{ date: string; item: PrayerAffirmation } | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const currentAffirmation =
+    customAffirmation && customAffirmation.date === currentDate
+      ? customAffirmation.item
+      : defaultAffirmation;
+  const isCustomShuffled = Boolean(customAffirmation && customAffirmation.date === currentDate);
+
+  const isPrayed = !!dailyAffirmationsPrayed[currentDate];
   const dayLog = getDayLog(currentDate);
 
   // Compute progress stats
@@ -34,13 +59,6 @@ export const HeroCard: React.FC = () => {
   // Water
   const waterProgress = (dayLog.waterGlasses || 0) / (dailyGoals.waterGlasses || 8);
 
-  // Dynamic Date parsing based on selected currentDate
-  const selectedDateObj = parseDateStr(currentDate);
-  const dayName = selectedDateObj.toLocaleDateString('en-US', { weekday: 'long' });
-  const formattedDate = selectedDateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  const todayStr = getTodayDateStr();
-  const isViewingToday = currentDate === todayStr;
-
   const getGreeting = () => {
     if (!isViewingToday) {
       if (currentDate < todayStr) return `${dayName} History`;
@@ -52,11 +70,45 @@ export const HeroCard: React.FC = () => {
     return 'Good evening';
   };
 
-  const nextQuote = () => {
+  const nextAffirmation = (e: React.MouseEvent) => {
+    e.stopPropagation();
     sound.triggerHaptic('light');
-    setIsCustomShuffled(true);
-    const randomIndex = Math.floor(Math.random() * dailyQuotes.length);
-    setCurrentQuote(dailyQuotes[randomIndex]);
+    const randomIndex = Math.floor(Math.random() * dailyAffirmations.length);
+    setCustomAffirmation({ date: currentDate, item: dailyAffirmations[randomIndex] });
+  };
+
+  const handlePlayBell = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    sound.triggerHaptic('medium');
+    sound.playBell();
+    toast.info('Sacred Temple Chime 🔔', {
+      description: 'Take a gentle, quiet breath for your prayer.',
+    });
+  };
+
+  const handleCopy = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    sound.triggerHaptic('light');
+    if (navigator?.clipboard) {
+      navigator.clipboard.writeText(currentAffirmation.text);
+      setCopied(true);
+      toast.success('Affirmation copied! 🙏', {
+        description: 'Saved to clipboard for your daily prayers.',
+      });
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const handleTogglePrayed = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    sound.triggerHaptic('heavy');
+    toggleAffirmationPrayed(currentDate);
+    if (!isPrayed) {
+      sound.playBell();
+      toast.success('Prayer Affirmation Completed! 🙏✨', {
+        description: 'May divine strength and stillness guide your day.',
+      });
+    }
   };
 
   return (
@@ -114,27 +166,77 @@ export const HeroCard: React.FC = () => {
         </button>
       </div>
 
-      {/* Daily Rotating Wisdom Banner */}
-      <div
-        onClick={nextQuote}
-        className="glass-panel-subtle rounded-2xl p-3.5 mb-4 cursor-pointer transition-all active:scale-[0.99] relative"
-      >
-        <div className="flex items-center justify-between mb-1">
+      {/* DEDICATED DAILY PRAYER AFFIRMATION CARD */}
+      <div className="glass-panel-subtle rounded-2xl p-4 mb-4 relative shadow-2xs border border-amber-200/50">
+        <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-1.5">
-            <Sparkles size={13} className="text-amber-600 animate-pulse" />
-            <span className="text-[10px] font-black uppercase tracking-wider text-amber-800">
-              {isCustomShuffled ? 'Refreshed Quote' : "Today's Daily Wisdom"} • {currentQuote.theme}
+            <span className="text-base">🙏</span>
+            <span className="text-[11px] font-black uppercase tracking-wider text-[#1B4332]">
+              {isCustomShuffled ? 'Prayer Reflection' : 'Daily Prayer Affirmation'}
+            </span>
+            <span className="text-[10px] font-bold px-2 py-0.2 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
+              {currentAffirmation.focus}
             </span>
           </div>
-          <div className="flex items-center gap-1 text-[10px] text-slate-500 font-semibold">
-            <Shuffle size={10} />
-            <span>Tap to cycle</span>
+
+          {/* Action Icons */}
+          <div className="flex items-center gap-1">
+            <button
+              onClick={handlePlayBell}
+              className="p-1 rounded-lg text-[#1B4332] hover:bg-emerald-100/50 active:scale-90 transition-all cursor-pointer"
+              title="Ring peaceful temple prayer bell"
+            >
+              <Bell size={13} />
+            </button>
+            <button
+              onClick={handleCopy}
+              className="p-1 rounded-lg text-slate-600 hover:bg-slate-200/60 active:scale-90 transition-all cursor-pointer"
+              title="Copy prayer affirmation"
+            >
+              {copied ? <Check size={13} className="text-emerald-700" /> : <Copy size={13} />}
+            </button>
+            <button
+              onClick={nextAffirmation}
+              className="p-1 rounded-lg text-slate-600 hover:bg-slate-200/60 active:scale-90 transition-all cursor-pointer"
+              title="Cycle to next prayer affirmation"
+            >
+              <Shuffle size={13} />
+            </button>
           </div>
         </div>
 
-        <p className="text-xs italic leading-relaxed text-slate-900 font-semibold">
-          "{currentQuote.text}"
-        </p>
+        {/* Prayer Affirmation Text */}
+        <blockquote className="text-xs italic leading-relaxed text-slate-900 font-bold border-l-2 border-[#1B4332] pl-2.5 my-1.5">
+          "{currentAffirmation.text}"
+        </blockquote>
+
+        {/* Prayer Completion Status Pill */}
+        <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-200/60 text-[10px]">
+          <span className="text-slate-500 font-semibold">
+            Theme: <strong className="text-slate-800">{currentAffirmation.theme}</strong>
+          </span>
+
+          <button
+            onClick={handleTogglePrayed}
+            className={`flex items-center gap-1 px-2.5 py-1 rounded-xl font-bold transition-all active:scale-95 cursor-pointer shadow-2xs ${
+              isPrayed
+                ? 'glass-btn-primary text-white'
+                : 'glass-btn-secondary text-slate-800'
+            }`}
+          >
+            {isPrayed ? (
+              <>
+                <Check size={11} className="text-[#D4AF37]" />
+                <span>Prayed Today ✓</span>
+              </>
+            ) : (
+              <>
+                <Sparkles size={11} className="text-amber-600" />
+                <span>Mark Prayed</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Daily Progress Rings Bar */}

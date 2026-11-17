@@ -31,11 +31,14 @@ export const WorkoutTab: React.FC = () => {
   const [timerOpen, setTimerOpen] = useState(false);
   const [timerSeconds, setTimerSeconds] = useState(60);
 
+  const isWorkoutCompleted = dayLog.workoutDone;
   const completedSetsForDay = dayLog.completedSets[selectedDayId] || [];
 
   // Calculate total sets for this workout
   const totalTargetSets = currentWorkout.exercises.reduce((acc, ex) => acc + ex.sets, 0);
-  const totalCompletedSets = completedSetsForDay.length;
+  const totalCompletedSets = isWorkoutCompleted
+    ? Math.max(totalTargetSets, completedSetsForDay.length)
+    : completedSetsForDay.length;
 
   const handleSetToggle = (exerciseIndex: number, setIndex: number, exerciseName: string) => {
     sound.triggerHaptic('medium');
@@ -59,7 +62,7 @@ export const WorkoutTab: React.FC = () => {
   const handleToggleFinishWorkout = () => {
     sound.triggerHaptic('heavy');
     const nextState = !dayLog.workoutDone;
-    toggleWorkoutDone(currentDate);
+    toggleWorkoutDone(currentDate, selectedDayId);
 
     if (nextState) {
       sound.playSuccess();
@@ -153,10 +156,10 @@ export const WorkoutTab: React.FC = () => {
           /* Exercise List */
           <div className="space-y-3 mt-3">
             {currentWorkout.exercises.map((exercise, exIdx) => {
-              const setsCompleted = completedSetsForDay.filter(
-                (cs) => cs.exerciseIndex === exIdx
-              ).length;
-              const isExDone = setsCompleted >= exercise.sets;
+              const setsCompleted = isWorkoutCompleted
+                ? exercise.sets
+                : completedSetsForDay.filter((cs) => cs.exerciseIndex === exIdx).length;
+              const isExDone = isWorkoutCompleted || setsCompleted >= exercise.sets;
 
               return (
                 <div
@@ -181,9 +184,11 @@ export const WorkoutTab: React.FC = () => {
                   {/* Set Tracker Pills with Glossy Styling */}
                   <div className="flex items-center gap-2 mt-2">
                     {Array.from({ length: exercise.sets }).map((_, setIdx) => {
-                      const isSetDone = completedSetsForDay.some(
-                        (cs) => cs.exerciseIndex === exIdx && cs.setIndex === setIdx
-                      );
+                      const isSetDone =
+                        isWorkoutCompleted ||
+                        completedSetsForDay.some(
+                          (cs) => cs.exerciseIndex === exIdx && cs.setIndex === setIdx
+                        );
 
                       return (
                         <button
