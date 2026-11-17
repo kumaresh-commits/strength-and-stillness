@@ -63,6 +63,14 @@ async function testAffirmationsRegression() {
   assert(affContent.includes('சமர்ப்பிக்கிறேன்'), 'Sample devotional Tamil keyword verified');
   assert(affContent.includes('அமைதியும்'), 'Sample devotional Tamil peace keyword verified');
   logPass('Devotional Tamil translations verified pure & accurate');
+
+  // Verify prayer completion is keyed per affirmation line (green button resets when changing lines)
+  const heroContent = fs.readFileSync(path.resolve('src/components/HeroCard.tsx'), 'utf-8');
+  assert(
+    heroContent.includes('prayerKey = `${currentDate}_${currentAffirmation.id}`'),
+    'Prayer status must be keyed to affirmation ID so green state resets on next affirmation'
+  );
+  logPass('Affirmation panel resets mark-prayer status on next line (green state does not remain)');
 }
 
 // 3. Regression Test: Store State Isolation & Workout Undo Behavior
@@ -115,6 +123,19 @@ async function testUiStylesAndCalendar() {
   assert(heroContent.includes('affirmationLanguage') && heroContent.includes('setAffirmationLanguage'), 'Affirmation language state switcher verified');
   assert(heroContent.includes('தமிழ்') && heroContent.includes('EN'), 'EN | தமிழ் pill switcher buttons verified');
   logPass('EN | தமிழ் language switcher verified in HeroCard');
+
+  // Verify 1-Tap Quick Navigation from Progress Rings (Diet, Gym, Water)
+  assert(heroContent.includes("navigateToSection(0, 'diet-plans-section')"), 'Diet ring jump navigation verified');
+  assert(heroContent.includes("navigateToSection(1, 'gym-workout-section')"), 'Gym ring jump navigation verified');
+  assert(heroContent.includes("navigateToSection(0, 'water-tracker-section')"), 'Water ring jump navigation verified');
+
+  const dietContent = fs.readFileSync(path.resolve('src/components/DietTab.tsx'), 'utf-8');
+  assert(dietContent.includes('id="diet-plans-section"'), 'Diet plans target DOM id present');
+  assert(dietContent.includes('id="water-tracker-section"'), 'Water tracker target DOM id present');
+
+  const workoutContent = fs.readFileSync(path.resolve('src/components/WorkoutTab.tsx'), 'utf-8');
+  assert(workoutContent.includes('id="gym-workout-section"'), 'Gym workout target DOM id present');
+  logPass('1-Tap Quick Navigation from progress rings to Diet, Gym & Water verified');
 }
 
 async function runAllTests() {

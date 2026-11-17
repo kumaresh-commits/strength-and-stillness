@@ -226,7 +226,7 @@ export const DietTab: React.FC = () => {
       </div>
 
       {/* 5 Meal Schedule Cards for Selected Day */}
-      <div className="space-y-3">
+      <div id="diet-plans-section" className="space-y-3 scroll-mt-20">
         <div className="flex items-center justify-between px-1">
           <span className="text-xs font-black text-slate-800">
             {activePlan.dayName} Meals ({dayLog.completedMeals.length}/5 Logged)
@@ -338,7 +338,7 @@ export const DietTab: React.FC = () => {
       </div>
 
       {/* Hydration Tracker Card */}
-      <div className="glass-panel rounded-3xl p-4.5 shadow-xs">
+      <div id="water-tracker-section" className="glass-panel rounded-3xl p-4.5 shadow-xs scroll-mt-20">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-2xl flex items-center justify-center glass-panel-subtle text-cyan-800 shadow-2xs">

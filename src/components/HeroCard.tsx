@@ -37,6 +37,7 @@ export const HeroCard: React.FC = () => {
     toggleAffirmationPrayed,
     affirmationLanguage,
     setAffirmationLanguage,
+    setActiveTab,
   } = useStore();
   const t = themes[theme];
 
@@ -58,7 +59,10 @@ export const HeroCard: React.FC = () => {
       : defaultAffirmation;
   const isCustomShuffled = Boolean(customAffirmation && customAffirmation.date === currentDate);
 
-  const isPrayed = !!dailyAffirmationsPrayed[currentDate];
+  // Key prayer completion to both the date and the specific affirmation line ID
+  // When cycling to another affirmation line, it immediately resets to uncompleted (green button does not remain)
+  const prayerKey = `${currentDate}_${currentAffirmation.id}`;
+  const isPrayed = Boolean(dailyAffirmationsPrayed[prayerKey]);
   const dayLog = getDayLog(currentDate);
 
   // Compute progress stats
@@ -122,11 +126,14 @@ export const HeroCard: React.FC = () => {
 
   const TimeIcon = timePeriodInfo.Icon;
 
+  // Next affirmation line handler: changes to another line and resets mark prayer state
   const nextAffirmation = (e: React.MouseEvent) => {
     e.stopPropagation();
     sound.triggerHaptic('light');
-    const randomIndex = Math.floor(Math.random() * dailyAffirmations.length);
-    setCustomAffirmation({ date: currentDate, item: dailyAffirmations[randomIndex] });
+    const available = dailyAffirmations.filter((a) => a.id !== currentAffirmation.id);
+    const randomIndex = Math.floor(Math.random() * available.length);
+    const nextItem = available[randomIndex];
+    setCustomAffirmation({ date: currentDate, item: nextItem });
   };
 
   const handlePlayBell = (e: React.MouseEvent) => {
@@ -167,7 +174,7 @@ export const HeroCard: React.FC = () => {
   const handleTogglePrayed = (e: React.MouseEvent) => {
     e.stopPropagation();
     sound.triggerHaptic('heavy');
-    toggleAffirmationPrayed(currentDate);
+    toggleAffirmationPrayed(prayerKey);
     if (!isPrayed) {
       sound.playBell();
       toast.success(
@@ -181,7 +188,31 @@ export const HeroCard: React.FC = () => {
               : 'May divine strength and stillness guide your day.',
         }
       );
+    } else {
+      toast.info(
+        affirmationLanguage === 'ta'
+          ? 'பிரார்த்தனை நிலை மீட்டமைக்கப்பட்டது'
+          : 'Affirmation reset to unprayed'
+      );
     }
+  };
+
+  // 1-Tap Quick-Jump Navigation from Progress Rings (Diet, Gym, Water)
+  const navigateToSection = (tabIndex: number, elementId: string) => {
+    sound.triggerHaptic('light');
+    setActiveTab(tabIndex);
+    // Slight timeout allows React to render the target tab before scrolling
+    setTimeout(() => {
+      const el = document.getElementById(elementId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Subtle focus ring pulse to visually highlight the target section
+        el.classList.add('ring-2', 'ring-[#2D6A4F]', 'transition-all');
+        setTimeout(() => {
+          el.classList.remove('ring-2', 'ring-[#2D6A4F]');
+        }, 1500);
+      }
+    }, 120);
   };
 
   return (
@@ -364,35 +395,50 @@ export const HeroCard: React.FC = () => {
         </div>
       </div>
 
-      {/* Daily Progress Rings Bar */}
-      <div className="grid grid-cols-3 gap-2 pt-1 border-t border-slate-200/80">
-        <ProgressRing
-          progress={mealsProgress}
-          color={t.ring1}
-          size={64}
-          strokeWidth={6}
-          label="Diet"
-          sublabel={`${completedMealsCount}/${targetMeals}`}
-          icon={<Utensils size={14} className="text-[#1B4332]" />}
-        />
-        <ProgressRing
-          progress={workoutProgress}
-          color={t.ring2}
-          size={64}
-          strokeWidth={6}
-          label="Gym"
-          sublabel={dayLog.workoutDone ? 'Done ✓' : `${totalCompletedSets}/${workoutTargetSets}`}
-          icon={<Dumbbell size={14} className="text-[#D4AF37]" />}
-        />
-        <ProgressRing
-          progress={waterProgress}
-          color={t.ring3}
-          size={64}
-          strokeWidth={6}
-          label="Water"
-          sublabel={`${dayLog.waterGlasses || 0}/${dailyGoals.waterGlasses || 8}`}
-          icon={<Droplets size={14} className="text-teal-700" />}
-        />
+      {/* Daily Progress Rings Bar with 1-Tap Quick Navigation */}
+      <div className="pt-2 border-t border-slate-200/80">
+        <div className="flex items-center justify-between text-[10px] font-bold text-slate-500 mb-1.5 px-0.5">
+          <span>Daily Goals Overview</span>
+          <span className="text-[9px] font-bold text-[#1B4332] opacity-80 flex items-center gap-0.5">
+            <span>Tap ring to jump</span>
+            <span>⚡</span>
+          </span>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          <ProgressRing
+            progress={mealsProgress}
+            color={t.ring1}
+            size={64}
+            strokeWidth={6}
+            label="Diet"
+            sublabel={`${completedMealsCount}/${targetMeals}`}
+            icon={<Utensils size={14} className="text-[#1B4332]" />}
+            onClick={() => navigateToSection(0, 'diet-plans-section')}
+            title="Tap to jump directly to Diet Meal Plans"
+          />
+          <ProgressRing
+            progress={workoutProgress}
+            color={t.ring2}
+            size={64}
+            strokeWidth={6}
+            label="Gym"
+            sublabel={dayLog.workoutDone ? 'Done ✓' : `${totalCompletedSets}/${workoutTargetSets}`}
+            icon={<Dumbbell size={14} className="text-[#D4AF37]" />}
+            onClick={() => navigateToSection(1, 'gym-workout-section')}
+            title="Tap to jump directly to Gym Workout Routine"
+          />
+          <ProgressRing
+            progress={waterProgress}
+            color={t.ring3}
+            size={64}
+            strokeWidth={6}
+            label="Water"
+            sublabel={`${dayLog.waterGlasses || 0}/${dailyGoals.waterGlasses || 8}`}
+            icon={<Droplets size={14} className="text-teal-700" />}
+            onClick={() => navigateToSection(0, 'water-tracker-section')}
+            title="Tap to jump directly to Water Hydration Tracker"
+          />
+        </div>
       </div>
     </div>
   );

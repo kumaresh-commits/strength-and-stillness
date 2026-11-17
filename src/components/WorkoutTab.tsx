@@ -121,7 +121,7 @@ export const WorkoutTab: React.FC = () => {
       <WeekCalendarBar className="my-1" />
 
       {/* Selected Day Workout Focus Card */}
-      <div className="glass-panel rounded-3xl p-4.5 relative overflow-hidden shadow-xs">
+      <div id="gym-workout-section" className="glass-panel rounded-3xl p-4.5 relative overflow-hidden shadow-xs scroll-mt-20">
         <div className="flex items-center justify-between mb-3">
           <div>
             <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider text-white glass-btn-primary mb-1">
