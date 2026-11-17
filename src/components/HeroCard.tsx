@@ -223,50 +223,32 @@ export const HeroCard: React.FC = () => {
         style={{ backgroundColor: t.primary }}
       />
 
-      {/* Header with Greeting & Veg Toggle */}
-      <div className="flex items-center justify-between mb-3 gap-2">
-        <div>
-          <div className="flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase text-slate-600 mb-1">
-            <span>{dayName}, {formattedDate}</span>
-            {!isViewingToday && (
-              <button
-                onClick={() => {
-                  sound.triggerHaptic('light');
-                  syncTodayDate();
-                }}
-                className="flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold glass-btn-primary text-white hover:opacity-90 active:scale-95 transition-all cursor-pointer"
-                title="Tap to jump back to today"
-              >
-                <RotateCcw size={9} />
-                <span>Today</span>
-              </button>
-            )}
-          </div>
-
-          {/* Time-of-day greeting with ROUND SHAPED climate / sky icon & refined responsive typography */}
-          <div className="flex items-center gap-2">
-            <div
-              className={`w-7.5 h-7.5 sm:w-8 sm:h-8 rounded-full flex items-center justify-center border shadow-xs transition-transform active:scale-95 ${timePeriodInfo.bgClass}`}
-              style={{
-                boxShadow: `0 0 10px ${timePeriodInfo.glowColor}`,
+      {/* Top Row: Day Date Badge & Veg/Non-Veg Toggle */}
+      <div className="flex items-center justify-between mb-2.5 gap-2">
+        <div className="flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase text-slate-600 flex-wrap">
+          <span>{dayName}, {formattedDate}</span>
+          {!isViewingToday && (
+            <button
+              onClick={() => {
+                sound.triggerHaptic('light');
+                syncTodayDate();
               }}
-              title={timePeriodInfo.label}
+              className="flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold glass-btn-primary text-white hover:opacity-90 active:scale-95 transition-all cursor-pointer"
+              title="Tap to jump back to today"
             >
-              <TimeIcon size={15} strokeWidth={2.3} />
-            </div>
-            <h1 className="text-sm sm:text-base font-bold tracking-tight text-slate-800 leading-tight">
-              {timePeriodInfo.label}
-            </h1>
-          </div>
+              <RotateCcw size={9} />
+              <span>Today</span>
+            </button>
+          )}
         </div>
 
-        {/* Veg / Non-Veg Toggle Pill with Glossy Styling (Compact: Non-Veg / Veg only) */}
+        {/* Veg / Non-Veg Toggle Pill (Compact: Non-Veg / Veg only) */}
         <button
           onClick={() => {
             sound.triggerHaptic('medium');
             toggleVegetarian();
           }}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black transition-all glass-btn-primary text-white cursor-pointer active:scale-95 shadow-sm self-start mt-0.5 shrink-0"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black transition-all glass-btn-primary text-white cursor-pointer active:scale-95 shadow-sm shrink-0"
           title="Toggle Vegetarian / Non-Vegetarian diet options"
         >
           {isVegetarian ? (
@@ -281,6 +263,22 @@ export const HeroCard: React.FC = () => {
             </>
           )}
         </button>
+      </div>
+
+      {/* Row 2: Time-of-day greeting with ROUND SHAPED climate / sky icon & refined responsive typography */}
+      <div className="flex items-center gap-2.5 mb-3.5">
+        <div
+          className={`w-8 h-8 rounded-full flex items-center justify-center border shadow-xs transition-transform active:scale-95 ${timePeriodInfo.bgClass}`}
+          style={{
+            boxShadow: `0 0 10px ${timePeriodInfo.glowColor}`,
+          }}
+          title={timePeriodInfo.label}
+        >
+          <TimeIcon size={16} strokeWidth={2.3} />
+        </div>
+        <h1 className="text-sm sm:text-base font-bold tracking-tight text-slate-800 leading-tight">
+          {timePeriodInfo.label}
+        </h1>
       </div>
 
       {/* DEDICATED DAILY PRAYER AFFIRMATION CARD */}

@@ -169,6 +169,15 @@ async function testUiStylesAndCalendar() {
   assert(cssContent.includes('[data-theme="cyber"] h1') && cssContent.includes('#F8FAFC !important'), 'High contrast headline typography for dark theme verified');
   assert(cssContent.includes('box-sizing: border-box'), 'Mobile box model normalization verified');
   logPass('Midnight Pine dark theme high-contrast styling and mobile outline margins verified');
+
+  // Verify Home Screen Bookmark & Standalone Top Layout Safe Area
+  const appContent = fs.readFileSync(path.resolve('src/App.tsx'), 'utf-8');
+  assert(appContent.includes('isStandalone') && appContent.includes('standalone-home-screen'), 'Mobile standalone home screen detection verified');
+  assert(cssContent.includes('.app-safe-top') && cssContent.includes('.standalone-home-screen'), 'Standalone safe area top padding verified in CSS');
+
+  const htmlContent = fs.readFileSync(path.resolve('index.html'), 'utf-8');
+  assert(htmlContent.includes('content="default"'), 'apple-mobile-web-app-status-bar-style set to default for clear status bar visibility');
+  logPass('Home screen bookmark standalone safe-area top clearance verified (no status bar overlap)');
 }
 
 async function runAllTests() {

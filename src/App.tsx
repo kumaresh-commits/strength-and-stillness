@@ -30,6 +30,12 @@ function App() {
     }
   }, [theme]);
 
+  // Detect if launched as a mobile home screen bookmark / standalone PWA
+  const isStandalone =
+    typeof window !== 'undefined' &&
+    (window.matchMedia('(display-mode: standalone)').matches ||
+      Boolean((window.navigator as unknown as { standalone?: boolean }).standalone));
+
   const tabs = [
     <DietTab key="diet" />,
     <WorkoutTab key="workout" />,
@@ -64,8 +70,12 @@ function App() {
       />
 
       <Toaster richColors position="top-center" />
-      {/* Mobile-first main container with calibrated margins and safe padding */}
-      <main className="w-full max-w-md mx-auto px-3 sm:px-4 pt-2.5 sm:pt-4 pb-28 sm:pb-32 relative z-10 box-border">
+      {/* Mobile-first main container with calibrated margins and standalone safe-area clearance */}
+      <main
+        className={`w-full max-w-md mx-auto px-3.5 sm:px-4 app-safe-top ${
+          isStandalone ? 'standalone-home-screen' : ''
+        } pb-28 sm:pb-32 relative z-10 box-border`}
+      >
         <HeroCard />
         {tabs[activeTab]}
       </main>
