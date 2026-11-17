@@ -69,12 +69,15 @@ interface AppState {
   notificationSettings: NotificationSettings;
   streakData: { currentDiet: number; longestDiet: number; currentGym: number; longestGym: number };
   dailyAffirmationsPrayed: Record<string, boolean>;
+  affirmationLanguage: 'en' | 'ta';
 
   setTheme: (t: ThemeMode) => void;
   toggleVegetarian: () => void;
   setActiveTab: (tab: number) => void;
   setCurrentDate: (date: string) => void;
   syncTodayDate: () => void;
+  setAffirmationLanguage: (lang: 'en' | 'ta') => void;
+  toggleAffirmationLanguage: () => void;
   toggleMeal: (date: string, mealId: string) => void;
   toggleSet: (date: string, dayId: string, exerciseIndex: number, setIndex: number, weight?: number) => void;
   setWaterGlasses: (date: string, glasses: number) => void;
@@ -170,12 +173,16 @@ export const useStore = create<AppState>()(
       notificationSettings: defaultNotifications,
       streakData: { currentDiet: 1, longestDiet: 1, currentGym: 1, longestGym: 1 },
       dailyAffirmationsPrayed: {},
+      affirmationLanguage: 'en',
 
       setTheme: (t) => set({ theme: t }),
       toggleVegetarian: () => set((s) => ({ isVegetarian: !s.isVegetarian })),
       setActiveTab: (tab) => set({ activeTab: tab }),
       setCurrentDate: (date) => set({ currentDate: date }),
       syncTodayDate: () => set({ currentDate: getTodayDateStr() }),
+      setAffirmationLanguage: (lang) => set({ affirmationLanguage: lang }),
+      toggleAffirmationLanguage: () =>
+        set((s) => ({ affirmationLanguage: s.affirmationLanguage === 'en' ? 'ta' : 'en' })),
 
       toggleAffirmationPrayed: (date) =>
         set((s) => ({
